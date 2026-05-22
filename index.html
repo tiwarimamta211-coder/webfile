@@ -1,1834 +1,1757 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CA Office Pro v3 — Production Ready</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<title>SocialPilot AI — Automatic Social Media System</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Satoshi:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body,#root{height:100%;width:100%;overflow:hidden}
-body{font-family:'Space Grotesk',sans-serif;background:#0c0f14;color:#e2e8f0}
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
+/* ══════════════════════════════════
+   ROOT & RESET
+══════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* Vibrant gradient-heavy dark theme */
+  --bg:         #050508;
+  --bg2:        #090910;
+  --surface:    #0d0d16;
+  --card:       #111120;
+  --card2:      #16162a;
+  --lift:       #1c1c34;
+  --border:     #1e1e38;
+  --border2:    #282850;
+  --border3:    #353580;
+
+  /* Brand gradient */
+  --g1:         #ff6b6b;
+  --g2:         #ffd93d;
+  --g3:         #6bcb77;
+  --g4:         #4d96ff;
+  --g5:         #c77dff;
+
+  /* Platforms */
+  --ig:         #e1306c;
+  --ig2:        #f77737;
+  --fb:         #1877f2;
+  --tw:         #1da1f2;
+  --li:         #0a66c2;
+  --yt:         #ff0000;
+  --pin:        #e60023;
+  --tk:         #010101;
+  --tk2:        #69c9d0;
+
+  /* Status */
+  --green:      #22d3a5;
+  --green-s:    rgba(34,211,165,.1);
+  --amber:      #fbbf24;
+  --amber-s:    rgba(251,191,36,.1);
+  --rose:       #fb7185;
+  --rose-s:     rgba(251,113,133,.1);
+  --blue:       #60a5fa;
+  --blue-s:     rgba(96,165,250,.1);
+
+  --text:       #f0f0ff;
+  --text2:      #8888b8;
+  --text3:      #44446a;
+  --text4:      #2a2a4a;
+
+  --sidebar-w:  264px;
+  --r:          14px;
+  --shadow:     0 8px 40px rgba(0,0,0,.7);
+}
+
+html,body{height:100%;overflow:hidden;font-family:'Manrope',sans-serif}
+body{background:var(--bg);color:var(--text);display:flex}
+
+/* Animated noise + gradient bg */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 10% 0%, rgba(255,107,107,.05) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 60% at 90% 100%, rgba(77,150,255,.06) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(199,125,255,.03) 0%, transparent 60%);
+}
+
+/* ══════════════════════════════════
+   SCROLLBAR
+══════════════════════════════════ */
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:#2d3748;border-radius:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 
-.mono{font-family:'JetBrains Mono',monospace}
-.serif{font-family:'Playfair Display',serif}
+/* ══════════════════════════════════
+   SIDEBAR
+══════════════════════════════════ */
+.sidebar{
+  width:var(--sidebar-w);
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  flex-shrink:0;z-index:20;overflow:hidden;
+  position:relative;
+}
+.sidebar::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:180px;
+  background:linear-gradient(180deg, rgba(255,107,107,.04) 0%, transparent 100%);
+  pointer-events:none;
+}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
-@keyframes slideIn{from{transform:translateX(-20px);opacity:0}to{transform:translateX(0);opacity:1}}
-@keyframes popIn{0%{transform:scale(.88);opacity:0}100%{transform:scale(1);opacity:1}}
-@keyframes toastSlide{from{transform:translateX(110%)}to{transform:translateX(0)}}
-@keyframes progressFill{from{width:0}to{width:100%}}
-@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(99,179,237,0)}50%{box-shadow:0 0 0 4px rgba(99,179,237,.15)}}
+/* Brand */
+.sb-top{padding:20px 16px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-brand{display:flex;align-items:center;gap:11px;margin-bottom:14px}
+.brand-icon{
+  width:40px;height:40px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--g1),var(--g5),var(--g4));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(255,107,107,.3);
+  font-size:1.1rem;position:relative;overflow:hidden;
+}
+.brand-icon::after{
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
+  animation:shimmer 3s infinite;
+}
+@keyframes shimmer{to{left:100%}}
+.brand-name{
+  font-family:'Syne',sans-serif;
+  font-size:.95rem;font-weight:800;letter-spacing:-.02em;color:var(--text);
+}
+.brand-sub{font-size:.6rem;color:var(--text3);font-weight:500;letter-spacing:.04em;margin-top:1px}
 
-.fade-up{animation:fadeUp .4s cubic-bezier(.22,1,.36,1) forwards}
-.pop-in{animation:popIn .35s cubic-bezier(.34,1.56,.64,1) forwards}
-.slide-in{animation:slideIn .3s ease forwards}
-.spin-anim{animation:spin 1.5s linear infinite}
-.pulse-anim{animation:pulse 1.4s ease-in-out infinite}
+/* Connected platforms strip */
+.sb-platforms{
+  display:flex;gap:5px;align-items:center;
+  padding:8px 10px;
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+}
+.sp-label{font-size:.62rem;color:var(--text3);font-weight:600;margin-right:2px}
+.plt-dot{
+  width:24px;height:24px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.68rem;font-weight:900;cursor:pointer;
+  transition:transform .15s;position:relative;
+}
+.plt-dot:hover{transform:scale(1.2)}
+.plt-dot::after{
+  content:'';position:absolute;bottom:0;right:0;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--green);border:1.5px solid var(--surface);
+}
+.plt-dot.off::after{background:var(--text3)}
 
-.nav-item{transition:all .2s ease;cursor:pointer;border-left:3px solid transparent}
-.nav-item:hover{background:rgba(99,179,237,.06);color:#e2e8f0}
-.nav-item.active{border-left-color:#63b3ed;background:rgba(99,179,237,.1);color:#63b3ed}
-.nav-item.soon{opacity:.45;cursor:not-allowed}
+/* AI Status */
+.sb-ai{
+  margin:10px 12px;padding:10px 12px;
+  background:linear-gradient(135deg,rgba(96,165,250,.08),rgba(199,125,255,.06));
+  border:1px solid rgba(96,165,250,.2);border-radius:10px;flex-shrink:0;
+}
+.ai-row{display:flex;align-items:center;gap:7px}
+.ai-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--green);flex-shrink:0;
+  animation:aiBlink 2s ease-in-out infinite;
+  box-shadow:0 0 8px var(--green);
+}
+@keyframes aiBlink{0%,100%{opacity:1;box-shadow:0 0 8px var(--green)}50%{opacity:.4;box-shadow:none}}
+.ai-text{font-size:.72rem;font-weight:600;color:var(--text2)}
+.ai-text strong{color:var(--green)}
+.ai-sub{font-size:.62rem;color:var(--text3);margin-top:3px}
+.ai-sub b{color:var(--text2)}
 
-.card{background:#141921;border:1px solid #1e2d3d;border-radius:14px}
-.card-hover{transition:transform .25s,box-shadow .25s;cursor:pointer}
-.card-hover:hover{transform:translateY(-3px);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+/* Nav */
+.sb-nav{flex:1;overflow-y:auto;padding:6px 10px}
+.sb-grp{font-size:.58rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text4);padding:10px 8px 4px}
+.ni{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 10px;border-radius:9px;cursor:pointer;
+  font-size:.81rem;font-weight:500;color:var(--text3);
+  transition:all .15s;margin-bottom:1px;
+}
+.ni:hover{background:var(--card);color:var(--text2)}
+.ni.active{
+  background:linear-gradient(135deg,rgba(255,107,107,.12),rgba(199,125,255,.08));
+  color:var(--text);border:1px solid rgba(255,107,107,.2);
+}
+.ni svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;flex-shrink:0}
+.ni-chip{
+  margin-left:auto;padding:1px 7px;border-radius:10px;
+  font-size:.59rem;font-weight:800;flex-shrink:0;
+}
+.nc-r{background:rgba(251,113,133,.15);color:var(--rose)}
+.nc-g{background:rgba(34,211,165,.1);color:var(--green)}
+.nc-a{background:rgba(251,191,36,.1);color:var(--amber)}
+.nc-b{background:rgba(96,165,250,.1);color:var(--blue)}
+.nc-p{background:rgba(199,125,255,.1);color:var(--g5)}
 
-.btn{cursor:pointer;border:none;font-family:'Space Grotesk',sans-serif;font-weight:600;border-radius:10px;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
-.btn:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.08)}
-.btn:active:not(:disabled){transform:translateY(0);filter:brightness(.95)}
-.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+/* Today's post */
+.sb-today{
+  margin:6px 10px 10px;padding:10px 12px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;flex-shrink:0;
+}
+.st-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:5px}
+.st-time{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;margin-bottom:3px}
+.st-t{color:var(--text2);font-weight:500}
+.st-p{color:var(--amber);font-weight:700;font-size:.65rem}
 
-input,select,textarea{outline:none;transition:border-color .2s,box-shadow .2s;font-family:'Space Grotesk',sans-serif}
-input:focus,select:focus,textarea:focus{border-color:#63b3ed!important;box-shadow:0 0 0 3px rgba(99,179,237,.12)!important}
+/* Sb footer */
+.sb-footer{border-top:1px solid var(--border);padding:12px 14px;flex-shrink:0}
+.sb-user{display:flex;align-items:center;gap:9px}
+.su-av{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--g1),var(--g5));
+  display:flex;align-items:center;justify-content:center;
+  font-size:.72rem;font-weight:800;color:white;flex-shrink:0;
+}
+.su-name{font-size:.8rem;font-weight:700;color:var(--text)}
+.su-plan{font-size:.62rem;color:var(--amber);font-weight:600}
 
-.table-row{transition:background .15s}
-.table-row:hover{background:rgba(255,255,255,.03)}
+/* ══════════════════════════════════
+   MAIN
+══════════════════════════════════ */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;position:relative;z-index:1}
 
-.drop-zone{border:2px dashed #1e2d3d;border-radius:14px;cursor:pointer;transition:all .2s}
-.drop-zone:hover,.drop-zone.over{border-color:#63b3ed;background:rgba(99,179,237,.04)}
+/* Topbar */
+.topbar{
+  padding:12px 22px;border-bottom:1px solid var(--border);
+  background:rgba(5,5,8,.85);backdrop-filter:blur(20px);
+  display:flex;align-items:center;gap:12px;flex-shrink:0;
+}
+.tb-ham{display:none;background:none;border:none;cursor:pointer;color:var(--text2);padding:4px}
+.tb-ham svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.tb-title{
+  font-family:'Syne',sans-serif;font-size:.98rem;font-weight:700;
+  color:var(--text);flex:1;letter-spacing:-.02em;
+}
+.tb-title span{font-size:.78rem;color:var(--text3);font-family:'Manrope',sans-serif;font-weight:400;margin-left:8px}
+.tb-acts{display:flex;align-items:center;gap:8px}
+.tb-btn{
+  padding:7px 13px;border-radius:9px;background:var(--card);
+  border:1px solid var(--border);color:var(--text2);
+  font-family:'Manrope',sans-serif;font-size:.77rem;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;
+}
+.tb-btn:hover{border-color:var(--border2);color:var(--text);background:var(--card2)}
+.tb-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round}
+.tb-cta{
+  padding:8px 16px;border-radius:10px;border:none;
+  font-family:'Manrope',sans-serif;font-size:.78rem;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;gap:7px;
+  background:linear-gradient(135deg,var(--g1),var(--g5));
+  color:white;box-shadow:0 2px 16px rgba(255,107,107,.3);
+  transition:all .15s;
+}
+.tb-cta:hover{transform:translateY(-1px);box-shadow:0 4px 24px rgba(255,107,107,.4)}
+.tb-cta svg{width:13px;height:13px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round}
 
-.badge{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500}
+/* ══════════════════════════════════
+   CONTENT
+══════════════════════════════════ */
+.content{flex:1;overflow-y:auto;padding:22px}
+.page{display:none}
+.page.active{display:block;animation:pgIn .22s ease}
+@keyframes pgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sh{margin-bottom:18px}
+.sh h2{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;color:var(--text);letter-spacing:-.025em;margin-bottom:3px}
+.sh p{font-size:.8rem;color:var(--text3)}
+.sh-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 
-.shimmer{background:linear-gradient(90deg,#141921 25%,#1e2d3d 50%,#141921 75%);background-size:400px 100%;animation:shimmer 1.8s infinite}
+/* ══════════════════════════════════
+   DASHBOARD HERO
+══════════════════════════════════ */
+.dash-hero{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:14px;margin-bottom:20px;
+}
+.dh-card{
+  border-radius:var(--r);padding:16px 18px;
+  border:1px solid var(--border);position:relative;
+  overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:default;
+  background:var(--card);box-shadow:0 2px 12px rgba(0,0,0,.4);
+}
+.dh-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.dh-glow{
+  position:absolute;top:-30px;right:-30px;
+  width:100px;height:100px;border-radius:50%;
+  filter:blur(30px);opacity:.15;
+  background:var(--gc,var(--g1));
+}
+.dh-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.dh-icon{
+  width:34px;height:34px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;
+  background:var(--ib,rgba(255,107,107,.1));
+}
+.dh-badge{
+  font-size:.6rem;font-weight:800;padding:2px 8px;border-radius:10px;
+  background:var(--bb,rgba(255,107,107,.12));color:var(--bc,var(--rose));
+}
+.dh-lbl{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:4px}
+.dh-val{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:var(--text);letter-spacing:-.03em;margin-bottom:2px}
+.dh-sub{font-size:.7rem;color:var(--text3)}
+.tr-up{color:var(--green);font-weight:700;font-size:.68rem}
+.tr-dn{color:var(--rose);font-weight:700;font-size:.68rem}
 
-.progress-bar{height:3px;background:#1e2d3d;border-radius:2px;overflow:hidden}
-.progress-fill{height:100%;background:linear-gradient(90deg,#63b3ed,#4299e1);border-radius:2px;animation:progressFill .8s ease forwards}
+/* ══════════════════════════════════
+   PANEL
+══════════════════════════════════ */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.ph{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ph-t{font-size:.86rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:7px;font-family:'Syne',sans-serif}
+.ph-t svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.ph-acts{display:flex;gap:6px}
+.pb{padding:14px 16px}
+.sm-btn{
+  padding:5px 10px;border-radius:7px;background:var(--card2);
+  border:1px solid var(--border);color:var(--text2);
+  font-size:.71rem;font-weight:700;cursor:pointer;
+  font-family:'Manrope',sans-serif;transition:all .15s;
+  display:flex;align-items:center;gap:4px;
+}
+.sm-btn:hover{border-color:var(--border2);color:var(--text)}
+.sm-btn.on{background:rgba(255,107,107,.1);border-color:rgba(255,107,107,.25);color:var(--rose)}
 
-.tag-valid{background:rgba(72,187,120,.15);color:#68d391;border:1px solid rgba(72,187,120,.3)}
-.tag-warn{background:rgba(236,201,75,.12);color:#f6e05e;border:1px solid rgba(236,201,75,.25)}
-.tag-error{background:rgba(252,129,129,.12);color:#fc8181;border:1px solid rgba(252,129,129,.25)}
-.tag-blue{background:rgba(99,179,237,.12);color:#63b3ed;border:1px solid rgba(99,179,237,.25)}
-.tag-purple{background:rgba(159,122,234,.12);color:#b794f4;border:1px solid rgba(159,122,234,.25)}
+/* Grids */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+.g64{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;margin-bottom:16px}
+.mb{margin-bottom:16px}
 
-/* Login screen */
-.login-bg{background:radial-gradient(ellipse at 30% 20%,rgba(99,179,237,.08) 0%,transparent 60%),
-  radial-gradient(ellipse at 70% 80%,rgba(159,122,234,.06) 0%,transparent 60%),#0c0f14}
+/* ══════════════════════════════════
+   POST COMPOSER
+══════════════════════════════════ */
+.composer{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;margin-bottom:16px;
+}
+.composer-top{
+  padding:14px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;
+}
+.ct-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--g1),var(--g5));
+  display:flex;align-items:center;justify-content:center;
+  font-size:.8rem;font-weight:800;color:white;flex-shrink:0;
+}
+.ct-input{
+  flex:1;background:none;border:none;outline:none;
+  font-family:'Manrope',sans-serif;font-size:.88rem;
+  color:var(--text);placeholder-color:var(--text3);
+}
+.ct-input::placeholder{color:var(--text3)}
+.ct-ai-btn{
+  padding:6px 12px;border-radius:8px;
+  background:linear-gradient(135deg,rgba(96,165,250,.15),rgba(199,125,255,.1));
+  border:1px solid rgba(96,165,250,.2);color:var(--blue);
+  font-size:.72rem;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;gap:5px;transition:all .15s;
+  white-space:nowrap;
+}
+.ct-ai-btn:hover{background:linear-gradient(135deg,rgba(96,165,250,.25),rgba(199,125,255,.15))}
+.composer-mid{padding:12px 18px;border-bottom:1px solid var(--border)}
+.cm-platforms{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.plt-toggle{
+  display:flex;align-items:center;gap:5px;
+  padding:5px 10px;border-radius:8px;
+  border:1px solid var(--border);background:var(--card2);
+  cursor:pointer;font-size:.72rem;font-weight:700;color:var(--text3);
+  transition:all .15s;
+}
+.plt-toggle:hover{border-color:var(--border2);color:var(--text2)}
+.plt-toggle.sel{color:white;border-color:transparent}
+.plt-toggle .pi{font-size:.8rem}
+.cm-tools{display:flex;gap:6px;flex-wrap:wrap}
+.cm-tool{
+  padding:5px 10px;border-radius:7px;
+  background:var(--card2);border:1px solid var(--border);
+  color:var(--text3);font-size:.71rem;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .15s;
+}
+.cm-tool:hover{border-color:var(--border2);color:var(--text2)}
+.cm-tool svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round}
+.composer-bot{
+  padding:10px 18px;display:flex;align-items:center;justify-content:space-between;
+  gap:12px;background:var(--card2);
+}
+.cb-left{display:flex;align-items:center;gap:8px}
+.cb-sched{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 10px;border-radius:8px;
+  border:1px solid var(--border);background:var(--card);
+  font-size:.72rem;color:var(--text2);font-weight:600;cursor:pointer;
+  transition:all .15s;
+}
+.cb-sched:hover{border-color:var(--border2);color:var(--text)}
+.char-count{font-size:.7rem;color:var(--text3);font-family:'JetBrains Mono',monospace}
+.post-btn{
+  padding:8px 18px;border-radius:9px;border:none;
+  background:linear-gradient(135deg,var(--g1),var(--g5));
+  color:white;font-family:'Manrope',sans-serif;font-size:.78rem;font-weight:700;
+  cursor:pointer;box-shadow:0 2px 12px rgba(255,107,107,.25);
+  transition:all .15s;display:flex;align-items:center;gap:6px;
+}
+.post-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(255,107,107,.35)}
+.post-btn svg{width:12px;height:12px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round}
 
-@media(max-width:768px){
-  .sidebar{position:fixed!important;z-index:200;transform:translateX(-100%);transition:transform .3s}
-  .sidebar.open{transform:translateX(0)}
-  .grid-2{grid-template-columns:1fr!important}
-  .grid-3{grid-template-columns:1fr!important}
-  .grid-4{grid-template-columns:1fr 1fr!important}
-  .hide-sm{display:none!important}
+/* ══════════════════════════════════
+   SCHEDULED POSTS CALENDAR
+══════════════════════════════════ */
+.cal-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  gap:2px;margin-bottom:12px;
+}
+.cal-day-hdr{
+  font-size:.62rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--text3);text-align:center;padding:4px 0;
+}
+.cal-cell{
+  min-height:60px;border-radius:7px;padding:4px 5px;
+  background:var(--card2);border:1px solid var(--border);
+  cursor:pointer;transition:background .12s;
+}
+.cal-cell:hover{background:var(--lift)}
+.cal-cell.today{border-color:var(--g1);background:rgba(255,107,107,.06)}
+.cal-date{font-size:.68rem;font-weight:700;color:var(--text3);margin-bottom:4px}
+.cal-cell.today .cal-date{color:var(--g1)}
+.cal-post-dot{
+  font-size:.58rem;padding:1px 5px;border-radius:4px;
+  margin-bottom:2px;font-weight:700;
+  display:flex;align-items:center;gap:3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cpd-ig{background:rgba(225,48,108,.15);color:var(--ig)}
+.cpd-fb{background:rgba(24,119,242,.15);color:var(--fb)}
+.cpd-tw{background:rgba(29,161,242,.15);color:var(--tw)}
+.cpd-li{background:rgba(10,102,194,.15);color:var(--li)}
+.cpd-yt{background:rgba(255,0,0,.15);color:var(--yt)}
+
+/* ══════════════════════════════════
+   ANALYTICS
+══════════════════════════════════ */
+.analytics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.ag-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px 16px;
+  position:relative;overflow:hidden;
+  transition:transform .2s;
+}
+.ag-card:hover{transform:translateY(-2px)}
+.ag-platform{
+  display:flex;align-items:center;gap:7px;margin-bottom:10px;
+}
+.ag-pico{
+  width:28px;height:28px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:.78rem;
+  flex-shrink:0;
+}
+.ag-pname{font-size:.78rem;font-weight:800;color:var(--text)}
+.ag-followers{font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:2px}
+.ag-change{font-size:.7rem;font-weight:700}
+.ag-metrics{
+  display:flex;gap:10px;margin-top:10px;
+  padding-top:10px;border-top:1px solid var(--border);
+}
+.ag-m{flex:1;text-align:center}
+.ag-m-v{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;color:var(--text)}
+.ag-m-l{font-size:.58rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
+
+/* ══════════════════════════════════
+   QUEUE / POSTS LIST
+══════════════════════════════════ */
+.post-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px 16px;margin-bottom:10px;
+  display:flex;gap:12px;align-items:flex-start;
+  transition:all .15s;
+}
+.post-card:hover{border-color:var(--border2);transform:translateX(2px)}
+.pc-time{
+  flex-shrink:0;text-align:center;width:50px;
+  padding:6px 4px;background:var(--card2);border-radius:8px;
+  border:1px solid var(--border);
+}
+.pc-time-h{font-family:'JetBrains Mono',monospace;font-size:.88rem;font-weight:700;color:var(--text)}
+.pc-time-d{font-size:.58rem;color:var(--text3);font-weight:600;text-transform:uppercase}
+.pc-body{flex:1;min-width:0}
+.pc-text{font-size:.82rem;color:var(--text2);line-height:1.55;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pc-plats{display:flex;gap:4px;flex-wrap:wrap}
+.pc-plt{
+  padding:2px 7px;border-radius:5px;
+  font-size:.62rem;font-weight:800;
+  display:flex;align-items:center;gap:3px;
+}
+.pc-plt .dot{width:5px;height:5px;border-radius:50%}
+.pc-status{flex-shrink:0;text-align:right}
+.status-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 9px;border-radius:20px;
+  font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;
+}
+.sb-sched{background:var(--amber-s);color:var(--amber)}
+.sb-pub{background:var(--green-s);color:var(--green)}
+.sb-draft{background:rgba(255,255,255,.05);color:var(--text3)}
+.sb-failed{background:var(--rose-s);color:var(--rose)}
+.pc-actions{display:flex;gap:4px;margin-top:7px;justify-content:flex-end}
+.pa{
+  padding:4px 8px;border-radius:6px;background:none;
+  border:none;color:var(--text3);font-size:.7rem;cursor:pointer;
+  display:flex;align-items:center;gap:3px;
+  font-family:'Manrope',sans-serif;font-weight:600;transition:all .12s;
+}
+.pa:hover{background:var(--card2);color:var(--text2)}
+
+/* ══════════════════════════════════
+   AI CONTENT GENERATOR
+══════════════════════════════════ */
+.ai-card{
+  background:linear-gradient(135deg,var(--card),rgba(96,165,250,.03));
+  border:1px solid rgba(96,165,250,.15);
+  border-radius:var(--r);padding:16px 18px;margin-bottom:10px;
+}
+.ai-card-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.ai-ic{
+  width:32px;height:32px;border-radius:9px;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(96,165,250,.2),rgba(199,125,255,.15));
+  display:flex;align-items:center;justify-content:center;font-size:.88rem;
+}
+.ai-card-t{font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:2px;font-family:'Syne',sans-serif}
+.ai-card-d{font-size:.74rem;color:var(--text3);line-height:1.5}
+.ai-gen-btn{
+  padding:7px 14px;border-radius:9px;border:none;
+  background:linear-gradient(135deg,var(--blue-s),rgba(199,125,255,.1));
+  color:var(--blue);font-size:.75rem;font-weight:700;
+  cursor:pointer;font-family:'Manrope',sans-serif;
+  display:flex;align-items:center;gap:6px;transition:all .15s;
+  border:1px solid rgba(96,165,250,.2);
+}
+.ai-gen-btn:hover{background:linear-gradient(135deg,rgba(96,165,250,.2),rgba(199,125,255,.15))}
+.ai-result{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:9px;padding:12px 14px;margin-top:10px;
+  font-size:.82rem;color:var(--text2);line-height:1.65;
+  display:none;
+}
+.ai-result.show{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.ai-result-actions{display:flex;gap:6px;margin-top:10px}
+.ar-btn{
+  padding:5px 11px;border-radius:7px;background:var(--card);
+  border:1px solid var(--border);color:var(--text2);
+  font-size:.71rem;font-weight:700;cursor:pointer;
+  font-family:'Manrope',sans-serif;transition:all .12s;
+}
+.ar-btn:hover{border-color:var(--border2);color:var(--text)}
+.ar-btn.use{background:rgba(255,107,107,.1);border-color:rgba(255,107,107,.25);color:var(--g1)}
+
+/* ══════════════════════════════════
+   HASHTAG / KEYWORD
+══════════════════════════════════ */
+.hashtag-cloud{display:flex;flex-wrap:wrap;gap:6px;padding:14px 16px}
+.ht{
+  padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:700;
+  cursor:pointer;transition:all .15s;
+}
+.ht:hover{transform:scale(1.05)}
+
+/* ══════════════════════════════════
+   CHARTS (CSS)
+══════════════════════════════════ */
+.bar-h{display:flex;flex-direction:column;gap:8px;padding:14px 16px}
+.bh-row{display:flex;align-items:center;gap:10px}
+.bh-lbl{font-size:.72rem;color:var(--text2);width:50px;flex-shrink:0;text-align:right}
+.bh-track{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.bh-fill{height:100%;border-radius:4px;transition:width .7s cubic-bezier(.4,0,.2,1)}
+.bh-val{font-size:.72rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text);min-width:40px}
+
+.bar-chart-v{display:flex;align-items:flex-end;gap:5px;height:110px}
+.bcv-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bcv-track{flex:1;width:100%;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+.bcv-fill{width:100%;border-radius:3px 3px 0 0;transition:height .7s cubic-bezier(.4,0,.2,1)}
+.bcv-lbl{font-size:.58rem;color:var(--text3);font-weight:700}
+
+/* ══════════════════════════════════
+   TABLE
+══════════════════════════════════ */
+.dt{width:100%;border-collapse:collapse;font-size:.79rem}
+.dt thead th{padding:8px 14px;text-align:left;font-size:.62rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);background:rgba(255,255,255,.015);white-space:nowrap}
+.dt tbody tr{border-bottom:1px solid rgba(255,255,255,.025);transition:background .1s}
+.dt tbody tr:hover{background:rgba(255,255,255,.02)}
+.dt tbody tr:last-child{border-bottom:none}
+.dt tbody td{padding:9px 14px;color:var(--text2);vertical-align:middle}
+.dt tbody td:first-child{color:var(--text);font-weight:600}
+.mono{font-family:'JetBrains Mono',monospace;font-size:.75rem}
+.num-g{color:var(--green);font-weight:700;font-family:'JetBrains Mono',monospace}
+.num-r{color:var(--rose);font-weight:700;font-family:'JetBrains Mono',monospace}
+
+/* ══════════════════════════════════
+   BADGE
+══════════════════════════════════ */
+.badge{
+  display:inline-flex;align-items:center;gap:3px;padding:2px 8px;
+  border-radius:20px;font-size:.61rem;font-weight:800;letter-spacing:.03em;text-transform:uppercase;
+}
+.badge::before{content:'';width:4px;height:4px;border-radius:50%;background:currentColor}
+.b-g{background:var(--green-s);color:var(--green)}
+.b-a{background:var(--amber-s);color:var(--amber)}
+.b-r{background:var(--rose-s);color:var(--rose)}
+.b-b{background:var(--blue-s);color:var(--blue)}
+.b-p{background:rgba(199,125,255,.1);color:var(--g5)}
+.b-grey{background:rgba(255,255,255,.06);color:var(--text3)}
+
+/* ══════════════════════════════════
+   FORM
+══════════════════════════════════ */
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.s2{grid-column:span 2}
+.fl{font-size:.66rem;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.07em}
+.fi,.fs,.fta{
+  padding:9px 12px;background:var(--surface);border:1.5px solid var(--border);
+  border-radius:9px;color:var(--text);
+  font-family:'Manrope',sans-serif;font-size:.83rem;font-weight:500;
+  outline:none;width:100%;transition:border-color .15s,box-shadow .15s;
+}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--g1);box-shadow:0 0 0 3px rgba(255,107,107,.1)}
+.fi::placeholder,.fta::placeholder{color:var(--text3);font-weight:400}
+.fs{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%2344446a' d='M5 6L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.fta{resize:vertical;min-height:80px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fgrid.g1{grid-template-columns:1fr}
+
+/* ══════════════════════════════════
+   BUTTONS
+══════════════════════════════════ */
+.btn{
+  padding:9px 18px;border-radius:10px;border:none;
+  font-family:'Manrope',sans-serif;font-size:.82rem;font-weight:700;
+  cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .15s;
+}
+.btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round}
+.btn-grad{background:linear-gradient(135deg,var(--g1),var(--g5));color:white;box-shadow:0 2px 14px rgba(255,107,107,.25)}
+.btn-grad:hover{transform:translateY(-1px);box-shadow:0 4px 22px rgba(255,107,107,.35)}
+.btn-ghost{background:var(--card2);border:1.5px solid var(--border);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text)}
+.btn-sm{padding:6px 12px;font-size:.74rem;border-radius:8px}
+
+/* ══════════════════════════════════
+   MODAL
+══════════════════════════════════ */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.8);
+  backdrop-filter:blur(12px);z-index:500;
+  display:none;align-items:center;justify-content:center;padding:16px;
+}
+.modal-bg.open{display:flex}
+.modal{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:18px;width:100%;
+  max-height:92vh;display:flex;flex-direction:column;
+  box-shadow:0 32px 80px rgba(0,0,0,.9);
+  animation:mIn .25s cubic-bezier(.34,1.2,.64,1);overflow:hidden;position:relative;
+}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--g1),var(--g5),transparent)}
+@keyframes mIn{from{opacity:0;transform:scale(.93) translateY(14px)}to{opacity:1;transform:none}}
+.modal.lg{max-width:760px}
+.modal.md{max-width:580px}
+.modal.sm{max-width:420px}
+.mh{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.mt{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;color:var(--text);letter-spacing:-.02em}
+.mx{width:28px;height:28px;border-radius:8px;background:var(--card2);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.mx:hover{background:var(--lift)}
+.mb-body{padding:20px 22px;overflow-y:auto;flex:1}
+.mf{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;flex-shrink:0;background:var(--surface)}
+
+/* ══════════════════════════════════
+   TOAST
+══════════════════════════════════ */
+.toasts{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{
+  padding:10px 16px;background:var(--card);border:1px solid var(--border);
+  border-radius:11px;color:var(--text);font-size:.8rem;font-weight:600;
+  box-shadow:var(--shadow);animation:tIn .2s ease;display:flex;align-items:center;gap:8px;min-width:220px;
+}
+.toast.ok{border-color:rgba(34,211,165,.35);color:var(--green)}
+.toast.err{border-color:rgba(251,113,133,.35);color:var(--rose)}
+.toast.ai{border-color:rgba(96,165,250,.35);color:var(--blue)}
+@keyframes tIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+
+/* ══════════════════════════════════
+   BEST TIME HEATMAP
+══════════════════════════════════ */
+.heatmap{display:grid;grid-template-columns:40px repeat(24,1fr);gap:2px;font-size:.55rem}
+.hm-hdr{background:none;text-align:center;color:var(--text3);padding:2px;font-family:'JetBrains Mono',monospace;font-weight:600}
+.hm-day{color:var(--text3);display:flex;align-items:center;font-weight:600;padding-right:6px;justify-content:flex-end}
+.hm-cell{
+  height:20px;border-radius:3px;cursor:pointer;transition:transform .1s;
+}
+.hm-cell:hover{transform:scale(1.2)}
+
+/* ══════════════════════════════════
+   AUTOMATION RULES
+══════════════════════════════════ */
+.rule-card{
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:12px;padding:14px 16px;margin-bottom:10px;
+  display:flex;align-items:center;gap:12px;
+  transition:all .15s;
+}
+.rule-card:hover{border-color:var(--border2)}
+.rule-icon{
+  width:38px;height:38px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+}
+.rule-info{flex:1}
+.rule-name{font-size:.84rem;font-weight:800;color:var(--text);margin-bottom:2px;font-family:'Syne',sans-serif}
+.rule-desc{font-size:.72rem;color:var(--text3);line-height:1.45}
+.rule-toggle{
+  width:42px;height:22px;border-radius:11px;
+  cursor:pointer;position:relative;flex-shrink:0;
+  transition:background .2s;
+}
+.rule-toggle.on{background:linear-gradient(135deg,var(--g1),var(--g5));box-shadow:0 0 10px rgba(255,107,107,.3)}
+.rule-toggle.off{background:var(--border2)}
+.rule-toggle::after{
+  content:'';position:absolute;width:16px;height:16px;border-radius:50%;
+  background:white;top:3px;transition:left .2s;
+  box-shadow:0 1px 4px rgba(0,0,0,.4);
+}
+.rule-toggle.on::after{left:23px}
+.rule-toggle.off::after{left:3px}
+
+/* ══════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════ */
+@media(max-width:1100px){.dash-hero{grid-template-columns:repeat(2,1fr)}.analytics-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){
+  .sidebar{position:fixed;top:0;bottom:0;left:0;z-index:100;transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+  .sidebar.open{transform:translateX(0);box-shadow:8px 0 40px rgba(0,0,0,.7)}
+  .tb-ham{display:flex}
+  .g2,.g64{grid-template-columns:1fr}
+  .g3{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .dash-hero,.analytics-grid,.g3{grid-template-columns:1fr}
+  .fgrid{grid-template-columns:1fr}
+  .fg.s2{grid-column:unset}
 }
 </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const {useState,useEffect,useRef,useCallback,useMemo}=React;
 
-/* ─── THEME ─── */
-const C={
-  bg:'#0c0f14', surf:'#0f1520', card:'#141921', card2:'#1a2332',
-  border:'#1e2d3d', accent:'#63b3ed', accentDim:'rgba(99,179,237,.1)',
-  green:'#68d391', greenDim:'rgba(72,187,120,.1)',
-  orange:'#f6ad55', orangeDim:'rgba(246,173,85,.1)',
-  red:'#fc8181', yellow:'#f6e05e', purple:'#b794f4',
-  muted:'#2d4a6b', sub:'#718096', text:'#e2e8f0', textDim:'#a0aec0',
-};
+<!-- ══════ SIDEBAR ══════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-top">
+    <div class="sb-brand">
+      <div class="brand-icon">🚀</div>
+      <div>
+        <div class="brand-name">SocialPilot AI</div>
+        <div class="brand-sub">Automatic Social Media System</div>
+      </div>
+    </div>
+    <div class="sb-platforms">
+      <span class="sp-label">Live:</span>
+      <div class="plt-dot" style="background:#e1306c22;color:#e1306c" title="Instagram">📸</div>
+      <div class="plt-dot" style="background:#1877f222;color:#1877f2" title="Facebook">👤</div>
+      <div class="plt-dot" style="background:#1da1f222;color:#1da1f2" title="Twitter/X">🐦</div>
+      <div class="plt-dot" style="background:#0a66c222;color:#0a66c2" title="LinkedIn">💼</div>
+      <div class="plt-dot" style="background:#ff000022;color:#ff0000" title="YouTube">▶️</div>
+      <div class="plt-dot off" style="background:#01010122;color:#69c9d0" title="TikTok (not connected)">🎵</div>
+    </div>
+  </div>
 
-/* ─── REGEX VALIDATORS ─── */
-const validateGSTIN=g=>/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][0-9A-Z][Z][0-9A-Z]$/.test(g?.trim());
-const validatePAN=p=>/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(p?.trim());
-const validateEmail=e=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+  <div class="sb-ai">
+    <div class="ai-row">
+      <div class="ai-dot"></div>
+      <div class="ai-text">AI Engine <strong>Active</strong></div>
+    </div>
+    <div class="ai-sub"><b>4 posts</b> scheduled today · <b>2</b> auto-generated · <b>1</b> going live in 38 min</div>
+  </div>
 
-/* ─── DATA REDACTOR ─── */
-const redact=t=>t
-  .replace(/\b[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][0-9A-Z][Z][0-9A-Z]\b/g,'[GSTIN]')
-  .replace(/\b[A-Z]{5}[0-9]{4}[A-Z]\b/g,'[PAN]')
-  .replace(/\b[2-9][0-9]{11}\b/g,'[AADHAAR]');
+  <nav class="sb-nav">
+    <div class="sb-grp">Main</div>
+    <div class="ni active" data-page="dashboard">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+      <span class="ni-chip nc-g">Live</span>
+    </div>
+    <div class="ni" data-page="compose">
+      <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Compose & Post
+      <span class="ni-chip nc-p">AI</span>
+    </div>
 
-/* ─── STORAGE ENGINE (multi-user aware) ─── */
-const STORE={
-  _u(){return sessionStorage.getItem('caop_user')||'guest'},
-  key(k){return `caop_v3_${this._u()}_${k}`},
-  set(k,v){try{localStorage.setItem(this.key(k),JSON.stringify({ts:Date.now(),d:v}));}catch{}},
-  get(k,fb=null){try{const r=localStorage.getItem(this.key(k));return r?JSON.parse(r).d:fb;}catch{return fb;}},
-  del(k){try{localStorage.removeItem(this.key(k));}catch{}},
-  allKeys(){return Object.keys(localStorage).filter(k=>k.startsWith(`caop_v3_${this._u()}`))},
-  exportAll(){
-    const data={};
-    this.allKeys().forEach(k=>{try{data[k]=JSON.parse(localStorage.getItem(k));}catch{}});
-    return data;
-  },
-  importAll(data){Object.entries(data).forEach(([k,v])=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}});}
-};
+    <div class="sb-grp">Planning</div>
+    <div class="ni" data-page="scheduler">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Content Scheduler
+      <span class="ni-chip nc-a">12</span>
+    </div>
+    <div class="ni" data-page="queue">
+      <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      Post Queue
+      <span class="ni-chip nc-b">8</span>
+    </div>
+    <div class="ni" data-page="ai_content">
+      <svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/></svg>
+      AI Content Gen
+      <span class="ni-chip nc-p">AI</span>
+    </div>
 
-/* ─── TALLY XML GENERATOR (Real Format) ─── */
-function genTallyXML(entries){
-  const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const vouchers=entries.map(e=>`
-  <VOUCHER VCHTYPE="${esc(e.voucher_type)}" ACTION="Create">
-    <DATE>${(e.date||'').replace(/\//g,'')}</DATE>
-    <VOUCHERTYPENAME>${esc(e.voucher_type)}</VOUCHERTYPENAME>
-    <NARRATION>${esc(e.narration)}</NARRATION>
-    <PARTYLEDGERNAME>${esc(e.party_name)}</PARTYLEDGERNAME>
-    <GUID>CA-${Date.now()}-${Math.random().toString(36).slice(2,8)}</GUID>
-    <ALLLEDGERENTRIES.LIST>
-      <LEDGERNAME>${esc(e.ledger_head||'Purchase Account')}</LEDGERNAME>
-      <AMOUNT>${-Math.abs(Number(e.subtotal)||0)}</AMOUNT>
-    </ALLLEDGERENTRIES.LIST>
-    ${Number(e.igst)>0?`<ALLLEDGERENTRIES.LIST><LEDGERNAME>IGST</LEDGERNAME><AMOUNT>${-Number(e.igst)}</AMOUNT></ALLLEDGERENTRIES.LIST>`:''}
-    ${Number(e.cgst)>0?`<ALLLEDGERENTRIES.LIST><LEDGERNAME>CGST</LEDGERNAME><AMOUNT>${-Number(e.cgst)}</AMOUNT></ALLLEDGERENTRIES.LIST>`:''}
-    ${Number(e.sgst)>0?`<ALLLEDGERENTRIES.LIST><LEDGERNAME>SGST</LEDGERNAME><AMOUNT>${-Number(e.sgst)}</AMOUNT></ALLLEDGERENTRIES.LIST>`:''}
-    <ALLLEDGERENTRIES.LIST>
-      <LEDGERNAME>${esc(e.party_name)}</LEDGERNAME>
-      <AMOUNT>${Math.abs(Number(e.total)||0)}</AMOUNT>
-    </ALLLEDGERENTRIES.LIST>
-    ${e.tds_applicable&&Number(e.tds_amount)>0?`
-    <ALLLEDGERENTRIES.LIST>
-      <LEDGERNAME>TDS Payable - ${esc(e.tds_section)}</LEDGERNAME>
-      <AMOUNT>${Math.abs(Number(e.tds_amount))}</AMOUNT>
-    </ALLLEDGERENTRIES.LIST>`:''}
-  </VOUCHER>`).join('');
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<ENVELOPE>
-  <HEADER>
-    <TALLYREQUEST>Import Data</TALLYREQUEST>
-  </HEADER>
-  <BODY>
-    <IMPORTDATA>
-      <REQUESTDESC>
-        <REPORTNAME>All Masters</REPORTNAME>
-        <STATICVARIABLES><SVCURRENTCOMPANY>CA Office</SVCURRENTCOMPANY></STATICVARIABLES>
-      </REQUESTDESC>
-      <REQUESTDATA>
-        <TALLYMESSAGE xmlns:UDF="TallyUDF">${vouchers}
-        </TALLYMESSAGE>
-      </REQUESTDATA>
-    </IMPORTDATA>
-  </BODY>
-</ENVELOPE>`;
+    <div class="sb-grp">Analytics</div>
+    <div class="ni" data-page="analytics">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Performance Analytics
+    </div>
+    <div class="ni" data-page="audience">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      Audience Insights
+    </div>
+
+    <div class="sb-grp">Automation</div>
+    <div class="ni" data-page="automation">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      Auto Rules
+      <span class="ni-chip nc-g">7 ON</span>
+    </div>
+    <div class="ni" data-page="hashtags">
+      <svg viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+      Hashtag Manager
+    </div>
+    <div class="ni" data-page="reports">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Reports & Export
+    </div>
+  </nav>
+
+  <div class="sb-today">
+    <div class="st-label">📅 Today's Schedule</div>
+    <div class="st-time"><span class="st-t">📸 Instagram Reel</span><span class="st-p">10:00 AM</span></div>
+    <div class="st-time"><span class="st-t">🐦 Twitter Thread</span><span class="st-p">1:00 PM</span></div>
+    <div class="st-time"><span class="st-t">💼 LinkedIn Article</span><span class="st-p">6:00 PM</span></div>
+    <div class="st-time"><span class="st-t">👤 Facebook Post</span><span class="st-p">8:00 PM</span></div>
+  </div>
+
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="su-av">RA</div>
+      <div>
+        <div class="su-name">Rohit Agarwal</div>
+        <div class="su-plan">⭐ Pro Plan · 5 accounts</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══════ MAIN ══════ -->
+<main class="main">
+  <div class="topbar">
+    <button class="tb-ham" onclick="document.getElementById('sidebar').classList.toggle('open')">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="tb-title" id="pgTitle">Dashboard <span>Overview</span></div>
+    <div class="tb-acts">
+      <button class="tb-btn" onclick="showToast('🤖 AI generating optimal post times…','ai')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <span>AI Optimize</span>
+      </button>
+      <button class="tb-btn" onclick="showToast('📊 Generating weekly report…','ok')">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Reports</span>
+      </button>
+      <button class="tb-cta" onclick="showPage('compose')">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Create Post
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div class="page active" id="page-dashboard">
+      <div class="sh"><h2>🚀 Social Media Command Center</h2><p>All platforms. One dashboard. Fully automated.</p></div>
+
+      <div class="dash-hero">
+        <div class="dh-card"><div class="dh-glow" style="--gc:var(--g1)"></div><div class="dh-top"><div class="dh-icon" style="--ib:rgba(255,107,107,.1)">👥</div><span class="dh-badge" style="--bb:rgba(34,211,165,.1);--bc:var(--green)">+2.4K</span></div><div class="dh-lbl">Total Followers</div><div class="dh-val">1.28M</div><div class="dh-sub"><span class="tr-up">↑ 4.2%</span> this month</div></div>
+        <div class="dh-card"><div class="dh-glow" style="--gc:var(--g4)"></div><div class="dh-top"><div class="dh-icon" style="--ib:rgba(96,165,250,.1)">❤️</div><span class="dh-badge" style="--bb:rgba(96,165,250,.12);--bc:var(--blue)">Avg</span></div><div class="dh-lbl">Engagement Rate</div><div class="dh-val">6.84%</div><div class="dh-sub"><span class="tr-up">↑ 1.2%</span> vs last week</div></div>
+        <div class="dh-card"><div class="dh-glow" style="--gc:var(--g5)"></div><div class="dh-top"><div class="dh-icon" style="--ib:rgba(199,125,255,.1)">📅</div><span class="dh-badge" style="--bb:rgba(251,191,36,.1);--bc:var(--amber)">Auto</span></div><div class="dh-lbl">Posts This Month</div><div class="dh-val">124</div><div class="dh-sub">87 auto-published</div></div>
+        <div class="dh-card"><div class="dh-glow" style="--gc:var(--g3)"></div><div class="dh-top"><div class="dh-icon" style="--ib:rgba(107,203,119,.1)">👁️</div><span class="dh-badge" style="--bb:rgba(34,211,165,.1);--bc:var(--green)">7D</span></div><div class="dh-lbl">Total Reach</div><div class="dh-val">842K</div><div class="dh-sub"><span class="tr-up">↑ 18%</span> this week</div></div>
+      </div>
+
+      <div class="g64">
+        <div>
+          <!-- Platform Performance -->
+          <div class="panel mb">
+            <div class="ph"><div class="ph-t"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Weekly Engagement by Platform</div></div>
+            <div class="bar-h" id="engBar"></div>
+          </div>
+          <!-- Recent published -->
+          <div class="panel">
+            <div class="ph"><div class="ph-t">⚡ Recently Auto-Published</div><button class="sm-btn" onclick="showPage('queue')">Queue →</button></div>
+            <div id="recentPosts"></div>
+          </div>
+        </div>
+        <div>
+          <!-- AI Insights -->
+          <div class="panel mb">
+            <div class="ph"><div class="ph-t">🧠 AI Insights</div></div>
+            <div id="aiInsights"></div>
+          </div>
+          <!-- Best Time to Post -->
+          <div class="panel">
+            <div class="ph"><div class="ph-t">⏰ Best Time to Post Today</div></div>
+            <div id="bestTimes"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Platform stats row -->
+      <div class="analytics-grid" id="platformCards"></div>
+    </div>
+
+    <!-- ══ COMPOSE ══ -->
+    <div class="page" id="page-compose">
+      <div class="sh"><h2>✍️ Compose & Publish</h2><p>Write once. Publish everywhere. AI-optimized for each platform.</p></div>
+
+      <!-- Composer -->
+      <div class="composer">
+        <div class="composer-top">
+          <div class="ct-avatar">RA</div>
+          <textarea class="ct-input" id="composeInput" rows="3" placeholder="What's on your mind? Let AI help craft the perfect post… ✨" oninput="updateCharCount()"></textarea>
+          <button class="ct-ai-btn" onclick="aiWritePost()">🤖 AI Write</button>
+        </div>
+        <div class="composer-mid">
+          <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:7px">Publish to:</div>
+          <div class="cm-platforms" id="platformToggles"></div>
+          <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin:10px 0 6px">Add to post:</div>
+          <div class="cm-tools">
+            <button class="cm-tool" onclick="showToast('Image upload coming','ai')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Image</button>
+            <button class="cm-tool" onclick="showToast('Video upload coming','ai')"><svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Video</button>
+            <button class="cm-tool" onclick="showToast('Link preview added','ok')"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>Link</button>
+            <button class="cm-tool" onclick="insertHashtags()"><svg viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>Hashtags</button>
+            <button class="cm-tool" onclick="showToast('Emoji picker opened','ai')">😊 Emoji</button>
+            <button class="cm-tool" onclick="showToast('AI optimizing captions per platform…','ai')">✨ Optimize Per Platform</button>
+          </div>
+        </div>
+        <div class="composer-bot">
+          <div class="cb-left">
+            <div class="cb-sched" onclick="showToast('Scheduling picker opened','ai')">
+              📅 Schedule for later
+            </div>
+            <span class="char-count" id="charCount">0 / 280</span>
+          </div>
+          <button class="post-btn" onclick="publishNow()">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Publish Now
+          </button>
+        </div>
+      </div>
+
+      <!-- Platform previews -->
+      <div class="g3" id="platformPreviews"></div>
+    </div>
+
+    <!-- ══ SCHEDULER ══ -->
+    <div class="page" id="page-scheduler">
+      <div class="sh-row sh">
+        <div><h2>📅 Content Scheduler</h2><p>Visual calendar — drag, drop, schedule posts</p></div>
+        <button class="btn btn-grad btn-sm" onclick="openModal('schedModal')">+ Schedule Post</button>
+      </div>
+      <!-- Calendar -->
+      <div class="panel mb">
+        <div class="ph">
+          <div class="ph-t">January 2025</div>
+          <div class="ph-acts">
+            <button class="sm-btn">← Prev</button>
+            <button class="sm-btn on">Today</button>
+            <button class="sm-btn">Next →</button>
+          </div>
+        </div>
+        <div style="padding:14px">
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
+      </div>
+      <!-- Upcoming -->
+      <div class="panel">
+        <div class="ph"><div class="ph-t">📋 Upcoming Scheduled Posts</div></div>
+        <table class="dt"><thead><tr><th>Date & Time</th><th>Content Preview</th><th>Platforms</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="scheduledTable"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ══ QUEUE ══ -->
+    <div class="page" id="page-queue">
+      <div class="sh-row sh">
+        <div><h2>📬 Post Queue</h2><p>All posts — published, scheduled, and drafts</p></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Reordering queue…','ai')">🔄 Reorder</button>
+          <button class="btn btn-grad btn-sm" onclick="showPage('compose')">+ Add Post</button>
+        </div>
+      </div>
+      <div class="g3" style="margin-bottom:14px">
+        <div class="dh-card"><div class="dh-lbl">In Queue</div><div class="dh-val" style="font-size:1.2rem">8</div></div>
+        <div class="dh-card"><div class="dh-lbl">Published Today</div><div class="dh-val" style="font-size:1.2rem;color:var(--green)">2</div></div>
+        <div class="dh-card"><div class="dh-lbl">Drafts</div><div class="dh-val" style="font-size:1.2rem;color:var(--amber)">5</div></div>
+      </div>
+      <div id="queueList"></div>
+    </div>
+
+    <!-- ══ AI CONTENT ══ -->
+    <div class="page" id="page-ai_content">
+      <div class="sh"><h2>🤖 AI Content Generator</h2><p>Generate high-performing posts, captions, and threads in seconds</p></div>
+      <div class="g2">
+        <div>
+          <div class="panel mb">
+            <div class="ph"><div class="ph-t">✨ Generate Post Content</div></div>
+            <div class="pb">
+              <div class="fgrid" style="gap:10px;margin-bottom:12px">
+                <div class="fg"><label class="fl">Content Type</label><select class="fs"><option>Instagram Caption</option><option>Twitter Thread</option><option>LinkedIn Post</option><option>Facebook Post</option><option>YouTube Description</option><option>Blog to Social Repurpose</option></select></div>
+                <div class="fg"><label class="fl">Tone</label><select class="fs"><option>Professional</option><option>Casual & Fun</option><option>Inspirational</option><option>Educational</option><option>Promotional</option><option>Humorous</option></select></div>
+                <div class="fg s2"><label class="fl">Topic / Keywords</label><input class="fi" placeholder="e.g. New product launch, fitness tips, startup journey…" id="aiTopic"/></div>
+              </div>
+              <button class="btn btn-grad" style="width:100%" onclick="generateAIContent()">🤖 Generate with AI</button>
+            </div>
+          </div>
+
+          <div id="aiResults"></div>
+        </div>
+        <div>
+          <div class="panel mb">
+            <div class="ph"><div class="ph-t">🔥 AI Caption Templates</div></div>
+            <div id="captionTemplates"></div>
+          </div>
+          <div class="panel">
+            <div class="ph"><div class="ph-t">📈 Top Performing Formats</div></div>
+            <div class="bar-h" id="formatPerf"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ANALYTICS ══ -->
+    <div class="page" id="page-analytics">
+      <div class="sh"><h2>📊 Performance Analytics</h2><p>Deep-dive into what's working across all platforms</p></div>
+      <div class="analytics-grid" id="analyticsCards"></div>
+      <div class="g64">
+        <div class="panel">
+          <div class="ph"><div class="ph-t">Post Performance (Last 7 Days)</div><div class="ph-acts"><button class="sm-btn on">7D</button><button class="sm-btn">30D</button></div></div>
+          <div class="pb"><div class="bar-chart-v" id="perfChart"></div>
+          <div style="display:flex;gap:12px;justify-content:center;margin-top:10px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:5px;font-size:.66rem;color:var(--text3)"><div style="width:8px;height:8px;border-radius:2px;background:var(--g1)"></div>Reach</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:.66rem;color:var(--text3)"><div style="width:8px;height:8px;border-radius:2px;background:var(--g4)"></div>Engagement</div>
+          </div></div>
+        </div>
+        <div class="panel">
+          <div class="ph"><div class="ph-t">Top Performing Posts</div></div>
+          <div id="topPosts"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph"><div class="ph-t">Platform Breakdown — This Month</div></div>
+        <table class="dt"><thead><tr><th>Platform</th><th>Followers</th><th>Posts</th><th>Avg Reach</th><th>Avg Likes</th><th>Avg Comments</th><th>Eng. Rate</th><th>Growth</th></tr></thead>
+        <tbody id="analyticsTable"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ══ AUDIENCE ══ -->
+    <div class="page" id="page-audience">
+      <div class="sh"><h2>👥 Audience Insights</h2><p>Know your audience. Target smarter.</p></div>
+      <div class="g2">
+        <div class="panel">
+          <div class="ph"><div class="ph-t">Age Distribution</div></div>
+          <div class="bar-h" id="ageBar"></div>
+        </div>
+        <div class="panel">
+          <div class="ph"><div class="ph-t">Top Locations</div></div>
+          <div class="bar-h" id="locBar"></div>
+        </div>
+      </div>
+      <div class="panel mb">
+        <div class="ph"><div class="ph-t">Best Times to Post — Heatmap</div></div>
+        <div style="padding:14px;overflow-x:auto"><div class="heatmap" id="heatmap"></div></div>
+      </div>
+      <div class="g2">
+        <div class="panel"><div class="ph"><div class="ph-t">Gender Split</div></div><div class="pb" id="genderChart"></div></div>
+        <div class="panel"><div class="ph"><div class="ph-t">Device Usage</div></div><div class="pb" id="deviceChart"></div></div>
+      </div>
+    </div>
+
+    <!-- ══ AUTOMATION ══ -->
+    <div class="page" id="page-automation">
+      <div class="sh-row sh">
+        <div><h2>⚙️ Automation Rules</h2><p>Set it and forget it — your social media on autopilot</p></div>
+        <button class="btn btn-grad btn-sm" onclick="openModal('ruleModal')">+ New Rule</button>
+      </div>
+      <div class="g3" style="margin-bottom:16px">
+        <div class="dh-card"><div class="dh-lbl">Rules Active</div><div class="dh-val" style="font-size:1.2rem;color:var(--green)">7</div></div>
+        <div class="dh-card"><div class="dh-lbl">Actions Run Today</div><div class="dh-val" style="font-size:1.2rem">24</div></div>
+        <div class="dh-card"><div class="dh-lbl">Hours Saved / Week</div><div class="dh-val" style="font-size:1.2rem;color:var(--amber)">18h</div></div>
+      </div>
+      <div id="rulesList"></div>
+    </div>
+
+    <!-- ══ HASHTAGS ══ -->
+    <div class="page" id="page-hashtags">
+      <div class="sh"><h2># Hashtag Manager</h2><p>Research, organize, and auto-attach the best hashtags</p></div>
+      <div class="g2">
+        <div class="panel">
+          <div class="ph"><div class="ph-t">🔥 Trending in Your Niche</div><button class="sm-btn" onclick="showToast('Refreshing trends…','ai')">Refresh</button></div>
+          <div class="hashtag-cloud" id="trendingHT"></div>
+        </div>
+        <div class="panel">
+          <div class="ph"><div class="ph-t">💼 Your Hashtag Groups</div><button class="sm-btn" onclick="openModal('htModal')">+ New Group</button></div>
+          <div id="htGroups"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph"><div class="ph-t">📊 Hashtag Performance</div></div>
+        <table class="dt"><thead><tr><th>Hashtag</th><th>Posts/day</th><th>Avg Reach</th><th>Your Rank</th><th>Competition</th><th>Recommendation</th></tr></thead>
+        <tbody id="htTable"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ══ REPORTS ══ -->
+    <div class="page" id="page-reports">
+      <div class="sh"><h2>📄 Reports & Export</h2><p>Beautiful automated reports sent to your inbox</p></div>
+      <div class="g2 mb">
+        <div class="panel">
+          <div class="ph"><div class="ph-t">📊 Monthly Summary Report</div></div>
+          <div class="pb">
+            <table class="dt" style="margin-bottom:12px">
+              <thead><tr><th>Metric</th><th>This Month</th><th>Last Month</th><th>Change</th></tr></thead>
+              <tbody id="reportTable"></tbody>
+            </table>
+            <button class="btn btn-grad btn-sm" style="width:100%" onclick="showToast('Generating PDF report…','ok')">📄 Download PDF Report</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="ph"><div class="ph-t">📧 Auto-Report Schedule</div></div>
+          <div class="pb" id="autoReports"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- MODALS -->
+<div class="modal-bg" id="schedModal">
+  <div class="modal md">
+    <div class="mh"><div class="mt">📅 Schedule a Post</div><button class="mx" onclick="closeModal('schedModal')">✕</button></div>
+    <div class="mb-body">
+      <div class="fgrid" style="gap:11px">
+        <div class="fg s2"><label class="fl">Post Content</label><textarea class="fta" rows="4" placeholder="Write your post here…"></textarea></div>
+        <div class="fg"><label class="fl">Date</label><input class="fi" type="date"/></div>
+        <div class="fg"><label class="fl">Time</label><input class="fi" type="time" value="10:00"/></div>
+        <div class="fg s2"><label class="fl">Platforms</label><select class="fs"><option>All Connected Platforms</option><option>Instagram only</option><option>Twitter + LinkedIn</option><option>Facebook + Instagram</option></select></div>
+        <div class="fg"><label class="fl">Post Type</label><select class="fs"><option>Feed Post</option><option>Story</option><option>Reel / Short</option><option>Carousel</option></select></div>
+        <div class="fg"><label class="fl">Category</label><select class="fs"><option>Promotional</option><option>Educational</option><option>Engagement</option><option>Behind the Scenes</option></select></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="closeModal('schedModal')">Cancel</button>
+      <button class="btn btn-grad" onclick="showToast('Post scheduled ✓','ok');closeModal('schedModal')">Schedule Post</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="ruleModal">
+  <div class="modal md">
+    <div class="mh"><div class="mt">⚙️ Create Automation Rule</div><button class="mx" onclick="closeModal('ruleModal')">✕</button></div>
+    <div class="mb-body">
+      <div class="fgrid" style="gap:11px">
+        <div class="fg"><label class="fl">Rule Name</label><input class="fi" placeholder="Auto-reply to comments"/></div>
+        <div class="fg"><label class="fl">Platform</label><select class="fs"><option>All Platforms</option><option>Instagram</option><option>Twitter</option><option>Facebook</option></select></div>
+        <div class="fg"><label class="fl">Trigger</label><select class="fs"><option>New Comment</option><option>New DM</option><option>New Follower</option><option>Post goes viral</option><option>Scheduled time</option></select></div>
+        <div class="fg"><label class="fl">Action</label><select class="fs"><option>Auto-Reply</option><option>Like comment</option><option>Send DM</option><option>Add to list</option><option>Notify me</option></select></div>
+        <div class="fg s2"><label class="fl">Response Template (if replying)</label><textarea class="fta" placeholder="Thank you for your comment! We'll get back to you shortly 🙏"></textarea></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="closeModal('ruleModal')">Cancel</button>
+      <button class="btn btn-grad" onclick="showToast('Automation rule created ✓','ok');closeModal('ruleModal')">Activate Rule</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="htModal">
+  <div class="modal sm">
+    <div class="mh"><div class="mt"># New Hashtag Group</div><button class="mx" onclick="closeModal('htModal')">✕</button></div>
+    <div class="mb-body">
+      <div class="fgrid g1" style="gap:10px">
+        <div class="fg"><label class="fl">Group Name</label><input class="fi" placeholder="e.g. Tech & Startup"/></div>
+        <div class="fg"><label class="fl">Hashtags (comma separated)</label><textarea class="fta" placeholder="#startup #entrepreneur #tech #innovation #growth…"></textarea></div>
+        <div class="fg"><label class="fl">Auto-attach to</label><select class="fs"><option>Select category…</option><option>All posts</option><option>Tech posts</option><option>Product posts</option></select></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="closeModal('htModal')">Cancel</button>
+      <button class="btn btn-grad" onclick="showToast('Hashtag group saved ✓','ok');closeModal('htModal')">Save Group</button>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+/* ══════════════════════════════════
+   DATA
+══════════════════════════════════ */
+const PLATFORMS=[
+  {id:'ig',name:'Instagram',icon:'📸',color:'#e1306c',bg:'rgba(225,48,108,.15)',followers:'428K',change:'+1.2K',er:'8.4%',posts:38,reach:'210K'},
+  {id:'fb',name:'Facebook',icon:'👤',color:'#1877f2',bg:'rgba(24,119,242,.15)',followers:'312K',change:'+840',er:'4.2%',posts:28,reach:'180K'},
+  {id:'tw',name:'Twitter/X',icon:'🐦',color:'#1da1f2',bg:'rgba(29,161,242,.15)',followers:'284K',change:'+2.1K',er:'6.8%',posts:52,reach:'220K'},
+  {id:'li',name:'LinkedIn',icon:'💼',color:'#0a66c2',bg:'rgba(10,102,194,.15)',followers:'168K',change:'+420',er:'9.2%',posts:18,reach:'124K'},
+  {id:'yt',name:'YouTube',icon:'▶️',color:'#ff0000',bg:'rgba(255,0,0,.15)',followers:'89K',change:'+380',er:'5.6%',posts:8,reach:'108K'},
+];
+const SCHEDULED_POSTS=[
+  {dt:'Jan 21',time:'10:00 AM',text:'🚀 Excited to announce our new AI-powered feature that saves 10x your time on social media! Check the link in bio for full details. #ProductLaunch #AI #Innovation',plats:['ig','tw','li'],type:'Promo',s:'scheduled'},
+  {dt:'Jan 21',time:'1:00 PM',text:'Thread: 7 things I wish I knew before starting my startup. A thread for every founder out there 🧵',plats:['tw','li'],type:'Thread',s:'scheduled'},
+  {dt:'Jan 21',time:'6:00 PM',text:'Today\'s LinkedIn article: "How to grow from 0 to 100K followers in 6 months" — sharing my exact strategy.',plats:['li'],type:'Article',s:'scheduled'},
+  {dt:'Jan 22',time:'9:00 AM',text:'Good morning! ☀️ Here\'s your daily dose of motivation: "Success is not final, failure is not fatal." — Churchill',plats:['ig','fb','tw'],type:'Quote',s:'scheduled'},
+  {dt:'Jan 22',time:'3:00 PM',text:'Behind the scenes: How we create content that converts. A day in the life of our social media team 🎬',plats:['ig','fb'],type:'BTS',s:'draft'},
+];
+const QUEUE_POSTS=[
+  {time:'10:00 AM',dt:'Today',text:'🚀 Excited to announce our new AI-powered feature that saves 10x your time! Check the link in bio. #ProductLaunch #AI',plats:['ig','tw','li'],s:'scheduled'},
+  {time:'1:00 PM',dt:'Today',text:'Thread: 7 things I wish I knew before starting my startup. A thread for every founder 🧵 1/ Let\'s start with the most important one...',plats:['tw'],s:'scheduled'},
+  {time:'6:00 PM',dt:'Today',text:'How to grow from 0 to 100K followers in 6 months — my exact strategy & playbook. Link in comments.',plats:['li'],s:'scheduled'},
+  {time:'9:00 AM',dt:'Tomorrow',text:'Good morning! ☀️ Here\'s your daily motivation: Success is not final, failure is not fatal. Keep going! 💪',plats:['ig','fb','tw'],s:'scheduled'},
+  {time:'3:00 PM',dt:'Tomorrow',text:'Behind the scenes: How we create 30 posts/month without burning out. Our full content creation process revealed.',plats:['ig','fb'],s:'draft'},
+  {time:'9:00 AM',dt:'Jan 23',text:'Weekly stat: Our engagement rate jumped 24% this week! Here\'s exactly what changed in our content strategy 📈',plats:['li','tw'],s:'scheduled'},
+  {time:'12:00 PM',dt:'Jan 23',text:'Reels tip: Adding text in the first 3 seconds increases watch time by 40%. Here\'s how we do it →',plats:['ig'],s:'draft'},
+  {time:'6:00 PM',dt:'Jan 24',text:'Client spotlight: How @TechStartup grew from 2K to 50K followers in 90 days using our strategy 🚀',plats:['ig','tw','li','fb'],s:'scheduled'},
+];
+const AI_TEMPLATES=[
+  {ic:'🎯',title:'Product Launch Hook',preview:'🚀 [Product Name] is finally here. We\'ve been building this for 18 months. Here\'s what makes it different... [Thread]'},
+  {ic:'💡',title:'Educational Carousel',preview:'5 things most people don\'t know about [Topic]. Save this post for later! 🔖 #Learning #Tips'},
+  {ic:'📖',title:'Personal Story',preview:'6 months ago I was [struggle]. Today [transformation]. Here\'s the exact 3-step process I used...'},
+  {ic:'🔥',title:'Engagement Bait',preview:'Hot take: [Controversial Opinion about your niche]. Do you agree? Drop your thoughts below 👇'},
+];
+const RULES=[
+  {ic:'💬',name:'Auto-Reply to Comments',desc:'When someone comments on your post, auto-reply with a thank you message within 5 minutes',on:true,c:'rgba(255,107,107,.1)'},
+  {ic:'📩',name:'Welcome DM for New Followers',desc:'Send an automatic welcome DM to every new Instagram follower with your link-in-bio',on:true,c:'rgba(96,165,250,.1)'},
+  {ic:'🔁',name:'Repurpose Blog Posts',desc:'When you publish a new blog post, automatically create and schedule social media posts for all platforms',on:true,c:'rgba(34,211,165,.1)'},
+  {ic:'⏰',name:'Best-Time Auto Scheduler',desc:'AI analyzes your audience and automatically schedules posts at the highest-engagement time slots',on:true,c:'rgba(199,125,255,.1)'},
+  {ic:'#️⃣',name:'Auto-Hashtag Injection',desc:'Automatically add the best-performing hashtag set to every post based on content category',on:true,c:'rgba(251,191,36,.1)'},
+  {ic:'🔔',name:'Viral Post Alert',desc:'When any post gets 2x normal engagement, instantly notify you and auto-boost it',on:true,c:'rgba(107,203,119,.1)'},
+  {ic:'📊',name:'Weekly Report Email',desc:'Every Monday at 9 AM, auto-generate and email you a detailed performance report',on:true,c:'rgba(255,107,107,.1)'},
+  {ic:'🤖',name:'AI Caption Optimizer',desc:'Before publishing, AI automatically improves your captions for maximum engagement (paused)',on:false,c:'rgba(255,255,255,.04)'},
+];
+const TRENDING_HT=[
+  {tag:'#AITools',posts:'2.4M',hot:true,c:'var(--g1)'},
+  {tag:'#StartupLife',posts:'8.2M',hot:false,c:'var(--g4)'},
+  {tag:'#ContentCreator',posts:'18.4M',hot:true,c:'var(--g5)'},
+  {tag:'#DigitalMarketing',posts:'12.1M',hot:false,c:'var(--green)'},
+  {tag:'#Entrepreneur',posts:'22.8M',hot:true,c:'var(--amber)'},
+  {tag:'#SocialMedia',posts:'31.2M',hot:false,c:'var(--g2)'},
+  {tag:'#GrowthHacking',posts:'3.8M',hot:true,c:'var(--g1)'},
+  {tag:'#Productivity',posts:'9.4M',hot:false,c:'var(--g4)'},
+  {tag:'#Marketing101',posts:'5.6M',hot:false,c:'var(--rose)'},
+  {tag:'#PersonalBrand',posts:'7.1M',hot:true,c:'var(--g5)'},
+  {tag:'#MondayMotivation',posts:'14.2M',hot:false,c:'var(--green)'},
+  {tag:'#BuildInPublic',posts:'1.2M',hot:true,c:'var(--amber)'},
+];
+const HT_GROUPS=[
+  {name:'🚀 Startup & Business',count:20,auto:true},
+  {name:'💻 Tech & AI',count:15,auto:true},
+  {name:'📈 Growth & Marketing',count:18,auto:false},
+  {name:'💡 Motivation & Life',count:12,auto:false},
+  {name:'🎨 Content Creation',count:16,auto:true},
+];
+const HT_TABLE=[
+  {tag:'#AITools','pd':'2.4M',reach:'8.2K',rank:'Top 10%',comp:'Medium',rec:'Use'},
+  {tag:'#BuildInPublic','pd':'1.2M',reach:'12.4K',rank:'Top 5%',comp:'Low',rec:'Best'},
+  {tag:'#StartupLife','pd':'8.2M',reach:'4.8K',rank:'Top 30%',comp:'High',rec:'Use'},
+  {tag:'#ContentCreator','pd':'18.4M',reach:'2.1K',rank:'Top 50%',comp:'Very High',rec:'Avoid'},
+  {tag:'#GrowthHacking','pd':'3.8M',reach:'9.8K',rank:'Top 15%',comp:'Medium',rec:'Use'},
+];
+const ANALYTICS_DATA=[
+  {platform:'Instagram',icon:'📸',followers:'428,200',posts:38,reach:'210K',likes:'18.4K',comments:'2.8K',er:'8.4%',growth:'+1,240'},
+  {platform:'Twitter/X',icon:'🐦',followers:'284,100',posts:52,reach:'220K',likes:'12.1K',comments:'4.2K',er:'6.8%',growth:'+2,100'},
+  {platform:'LinkedIn',icon:'💼',followers:'168,400',posts:18,reach:'124K',likes:'8.4K',comments:'1.8K',er:'9.2%',growth:'+420'},
+  {platform:'Facebook',icon:'👤',followers:'312,000',posts:28,reach:'180K',likes:'9.8K',comments:'1.2K',er:'4.2%',growth:'+840'},
+  {platform:'YouTube',icon:'▶️',followers:'89,200',posts:8,reach:'108K',likes:'6.2K',comments:'940',er:'5.6%',growth:'+380'},
+];
+const REPORT_DATA=[
+  {m:'Total Followers','th':'1,281,900','lm':'1,258,820',c:'+0.9%',up:true},
+  {m:'Total Posts Published','th':'124','lm':'108',c:'+14.8%',up:true},
+  {m:'Total Reach','th':'842,000','lm':'714,000',c:'+17.9%',up:true},
+  {m:'Total Engagements','th':'68,400','lm':'54,200',c:'+26.2%',up:true},
+  {m:'Avg Engagement Rate','th':'6.84%','lm':'5.62%',c:'+1.22%',up:true},
+  {m:'New Followers Gained','th':'23,080','lm':'18,240',c:'+26.5%',up:true},
+  {m:'Link Clicks','th':'14,200','lm':'11,800',c:'+20.3%',up:true},
+  {m:'Stories Views','th':'284,000','lm':'241,000',c:'+17.8%',up:true},
+];
+const AI_INSIGHTS=[
+  {ic:'🔥',t:'Best Performing Content',d:'Your "educational carousel" posts get 3.2x more saves than any other format. AI recommends posting 4/week.'},
+  {ic:'⏰',t:'Optimal Post Time',d:'Monday 7-8 PM and Thursday 6-7 PM generate 40% higher reach. AI has scheduled your next 8 posts around these.'},
+  {ic:'📈',t:'Follower Growth Spike',d:'Twitter followers grew 12% this week. Your "startup tips" thread went viral. AI suggests creating a similar series.'},
+  {ic:'💡',t:'Hashtag Opportunity',d:'#BuildInPublic has low competition but high engagement in your niche. AI will auto-inject it into relevant posts.'},
+];
+const BEST_TIMES=[
+  {t:'9:00 AM',d:'Mon/Wed/Fri',p:'Instagram',score:92},
+  {t:'12:30 PM',d:'Tue/Thu',p:'LinkedIn',score:88},
+  {t:'7:00 PM',d:'Mon/Thu',p:'All Platforms',score:96},
+  {t:'10:00 AM',d:'Saturday',p:'Facebook',score:84},
+];
+
+/* ══════════════════════════════════
+   UTILS
+══════════════════════════════════ */
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function showToast(msg,type=''){
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;el.textContent=msg;
+  $('toasts').appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .25s';setTimeout(()=>el.remove(),250);},2700);
 }
+function openModal(id){$(id)?.classList.add('open')}
+function closeModal(id){$(id)?.classList.remove('open')}
+document.addEventListener('click',e=>{if(e.target.classList.contains('modal-bg'))e.target.classList.remove('open')});
 
-/* ─── GST JSON GENERATOR (Real GSTN format) ─── */
-function genGSTJSON(analysis,form){
-  return {
-    gstin:form.gstin, fp:form.period.replace(' ','').replace('202','2'),
-    ret_period:form.period, filing_type:form.gstType,
-    generated_at:new Date().toISOString(),
-    b2b:[], b2cs:[], cdnr:[], exp:[], at:[], txpd:[],
-    sup_details:{
-      osup_det:{txval:analysis?.summary?.taxable_turnover||0,
-        iamt:analysis?.summary?.igst||0,camt:analysis?.summary?.cgst||0,samt:analysis?.summary?.sgst||0,csamt:0},
-      osup_zero:{txval:0,iamt:0,camt:0,samt:0,csamt:0},
-      osup_nil_exmp:{txval:0},
-      isup_rev:{txval:0,iamt:0,camt:0,samt:0,csamt:0},
-      osup_nongst:{txval:0}
-    },
-    itc_elg:{
-      itc_avl:[
-        {ty:"IMPG",iamt:0,camt:0,samt:0,csamt:0},
-        {ty:"IMPPS",iamt:0,camt:0,samt:0,csamt:0},
-        {ty:"ISRC",iamt:analysis?.summary?.igst||0,camt:analysis?.summary?.cgst||0,samt:analysis?.summary?.sgst||0,csamt:0},
-        {ty:"ISD",iamt:0,camt:0,samt:0,csamt:0},
-        {ty:"OTH",iamt:0,camt:0,samt:0,csamt:0}
-      ],
-      itc_rev:[{ty:"RUL",iamt:0,camt:0,samt:0,csamt:0},{ty:"OTH",iamt:0,camt:0,samt:0,csamt:0}],
-      itc_net:{iamt:analysis?.summary?.itc_available||0,camt:0,samt:0,csamt:0},
-      itc_inelg:[{ty:"RUL",iamt:0,camt:0,samt:0,csamt:0},{ty:"OTH",iamt:0,camt:0,samt:0,csamt:0}]
-    },
-    intr_ltfee:{intr_details:{iamt:analysis?.interest||0,camt:0,samt:0,csamt:0},
-      ltfee_details:{iamt:analysis?.late_fee||0,camt:0,samt:0,csamt:0}},
-    tax_payment:{stax:analysis?.summary?.net_payable||0,oitc:analysis?.summary?.itc_available||0,
-      inner:[{tax_type:"IGST",intr:0,tax:0,pen:0,fee:0,oth:0,cash:0,itc:0,ttl_pd:0},
-             {tax_type:"CGST",intr:0,tax:0,pen:0,fee:0,oth:0,cash:0,itc:0,ttl_pd:0},
-             {tax_type:"SGST",intr:0,tax:0,pen:0,fee:0,oth:0,cash:0,itc:0,ttl_pd:0}]},
-    nil:{sply:[{sply_ty:"INTRB2B",nil_amt:0,expt_amt:0,ngsup_amt:0},
-               {sply_ty:"INTRB2C",nil_amt:0,expt_amt:0,ngsup_amt:0}]}
-  };
-}
+/* ══════════════════════════════════
+   INIT
+══════════════════════════════════ */
+document.addEventListener('DOMContentLoaded',()=>{
+  buildDashboard();buildCompose();buildScheduler();buildQueue();buildAIContent();buildAnalytics();buildAudience();buildAutomation();buildHashtags();buildReports();
+});
 
-/* ─── DOWNLOAD HELPER ─── */
-function downloadFile(content,filename,type='text/plain'){
-  const blob=new Blob([content],{type});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=filename;a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
-
-/* ─── API CALL ─── */
-async function callAI(system,userMsg,opts={}){
-  const {maxRetries=2,timeout=28000}=opts;
-  const safe=redact(userMsg);
-  for(let i=0;i<=maxRetries;i++){
-    try{
-      const ctrl=new AbortController();
-      const t=setTimeout(()=>ctrl.abort(),timeout);
-      const r=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',headers:{'Content-Type':'application/json'},signal:ctrl.signal,
-        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system,
-          messages:[{role:'user',content:safe}]})
-      });
-      clearTimeout(t);
-      if(!r.ok) throw new Error(`HTTP ${r.status}`);
-      const d=await r.json();
-      return d.content?.[0]?.text||'';
-    }catch(e){if(i===maxRetries)throw e;await new Promise(r=>setTimeout(r,800*(i+1)));}
+/* ══════════════════════════════════
+   BUILDERS
+══════════════════════════════════ */
+function buildDashboard(){
+  // Engagement bar
+  const eb=$('engBar');
+  if(eb){
+    const data=[{l:'Instagram',v:84,c:'linear-gradient(90deg,#e1306c,#f77737)'},{l:'Twitter',v:68,c:'linear-gradient(90deg,#1da1f2,#0ea5e9)'},{l:'LinkedIn',v:92,c:'linear-gradient(90deg,#0a66c2,#0284c7)'},{l:'Facebook',v:42,c:'linear-gradient(90deg,#1877f2,#3b82f6)'},{l:'YouTube',v:56,c:'linear-gradient(90deg,#ff0000,#ef4444)'}];
+    data.forEach(d=>{
+      eb.innerHTML+=`<div class="bh-row"><div class="bh-lbl">${d.l.substring(0,5)}</div><div class="bh-track"><div class="bh-fill" style="width:${d.v}%;background:${d.c}"></div></div><div class="bh-val">${d.v}%</div></div>`;
+    });
+  }
+  // Recent posts
+  const rp=$('recentPosts');
+  if(rp){
+    QUEUE_POSTS.slice(0,3).forEach(p=>{
+      rp.innerHTML+=`<div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;border-radius:9px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0">${PLATFORMS.find(pl=>p.plats.includes(pl.id))?.icon||'📱'}</div>
+        <div style="flex:1;min-width:0"><div style="font-size:.8rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.text.substring(0,60))}…</div>
+        <div style="display:flex;gap:5px;margin-top:3px">${p.plats.map(pl=>`<span style="font-size:.6rem;padding:1px 5px;border-radius:4px;background:${PLATFORMS.find(x=>x.id===pl)?.bg||'rgba(255,255,255,.06)'};color:${PLATFORMS.find(x=>x.id===pl)?.color||'#fff'}">${PLATFORMS.find(x=>x.id===pl)?.icon||''}</span>`).join('')}</div></div>
+        <div style="text-align:right;flex-shrink:0"><div style="font-size:.72rem;color:var(--amber);font-weight:700">${p.time}</div><div style="font-size:.62rem;color:var(--text3)">${p.dt}</div></div>
+      </div>`;
+    });
+  }
+  // AI Insights
+  const ai=$('aiInsights');
+  if(ai){
+    AI_INSIGHTS.forEach(i=>{
+      ai.innerHTML+=`<div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;gap:9px">
+        <span style="font-size:1rem;flex-shrink:0">${i.ic}</span>
+        <div><div style="font-size:.8rem;font-weight:800;color:var(--text);margin-bottom:2px">${i.t}</div><div style="font-size:.72rem;color:var(--text3);line-height:1.45">${i.d}</div></div>
+      </div>`;
+    });
+  }
+  // Best times
+  const bt=$('bestTimes');
+  if(bt){
+    BEST_TIMES.forEach(t=>{
+      bt.innerHTML+=`<div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="background:rgba(255,107,107,.1);border-radius:8px;padding:5px 10px;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;color:var(--g1)">${t.t}</div>
+          <div><div style="font-size:.78rem;font-weight:600;color:var(--text)">${t.p}</div><div style="font-size:.65rem;color:var(--text3)">${t.d}</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="width:${t.score}px;height:5px;background:linear-gradient(90deg,var(--green),var(--g3));border-radius:3px;max-width:80px"></div>
+          <span style="font-size:.7rem;font-weight:700;color:var(--green)">${t.score}%</span>
+        </div>
+      </div>`;
+    });
+  }
+  // Platform cards
+  const pc=$('platformCards');
+  if(pc){
+    PLATFORMS.forEach(p=>{
+      pc.innerHTML+=`<div class="ag-card">
+        <div class="ag-platform"><div class="ag-pico" style="background:${p.bg}">${p.icon}</div><div><div class="ag-pname">${p.name}</div></div></div>
+        <div class="ag-followers">${p.followers}</div>
+        <div class="ag-change" style="color:var(--green)">${p.change} this week</div>
+        <div class="ag-metrics">
+          <div class="ag-m"><div class="ag-m-v">${p.er}</div><div class="ag-m-l">Eng.</div></div>
+          <div class="ag-m"><div class="ag-m-v">${p.posts}</div><div class="ag-m-l">Posts</div></div>
+          <div class="ag-m"><div class="ag-m-v">${p.reach}</div><div class="ag-m-l">Reach</div></div>
+        </div>
+      </div>`;
+    });
   }
 }
 
-function safeJSON(raw,fb={}){
-  try{return JSON.parse(raw.replace(/```json\n?|```\n?/g,'').trim());}catch{return fb;}
-}
-
-/* ─── TOAST ─── */
-function useToast(){
-  const [toasts,set]=useState([]);
-  const add=useCallback((msg,type='success')=>{
-    const id=Date.now()+Math.random();
-    set(p=>[...p,{id,msg,type}]);
-    setTimeout(()=>set(p=>p.filter(t=>t.id!==id)),4200);
-  },[]);
-  return{toasts,toast:add};
-}
-
-function Toasts({toasts}){
-  const icons={success:'✓',error:'✕',warning:'!'};
-  const colors={success:C.green,error:C.red,warning:C.yellow};
-  return(
-    <div style={{position:'fixed',top:18,right:18,zIndex:9999,display:'flex',flexDirection:'column',gap:8}}>
-      {toasts.map(t=>(
-        <div key={t.id} style={{background:C.card,border:`1px solid ${colors[t.type]}44`,
-          borderRadius:12,padding:'11px 16px',fontSize:13,color:colors[t.type],
-          display:'flex',gap:10,alignItems:'center',maxWidth:310,
-          animation:'toastSlide .3s ease',boxShadow:'0 8px 30px rgba(0,0,0,.5)'}}>
-          <span style={{width:20,height:20,borderRadius:'50%',background:colors[t.type]+'22',
-            display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,flexShrink:0}}>
-            {icons[t.type]}
-          </span>
-          <span style={{color:C.text}}>{t.msg}</span>
+function buildCompose(){
+  const pt=$('platformToggles');
+  if(pt){
+    PLATFORMS.forEach(p=>{
+      pt.innerHTML+=`<div class="plt-toggle" style="background:${p.bg}" onclick="this.classList.toggle('sel')">
+        <span class="pi">${p.icon}</span><span style="color:${p.color}">${p.name}</span>
+      </div>`;
+    });
+  }
+  const pp=$('platformPreviews');
+  if(pp){
+    const previewContent='🚀 Excited to announce our new AI-powered feature! Check it out 👇 #AI #Innovation';
+    PLATFORMS.slice(0,3).forEach(p=>{
+      pp.innerHTML+=`<div class="panel">
+        <div class="ph" style="border-bottom-color:${p.color}30"><div class="ph-t">${p.icon} ${p.name} Preview</div></div>
+        <div class="pb">
+          <div style="background:var(--surface);border-radius:10px;padding:12px;border:1px solid var(--border)">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+              <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--g1),var(--g5));display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:white">RA</div>
+              <div><div style="font-size:.78rem;font-weight:700;color:var(--text)">Rohit Agarwal</div><div style="font-size:.62rem;color:var(--text3)">Just now</div></div>
+            </div>
+            <div style="font-size:.8rem;color:var(--text2);line-height:1.55" id="preview-${p.id}">${previewContent}</div>
+          </div>
+          <div style="margin-top:8px;font-size:.68rem;color:var(--text3);display:flex;justify-content:space-between">
+            <span>${p.id==='tw'?'280 char limit':p.id==='li'?'3000 char limit':'2200 char limit'}</span>
+            <span style="color:var(--green)">✓ Optimized</span>
+          </div>
         </div>
-      ))}
-    </div>
-  );
+      </div>`;
+    });
+  }
 }
 
-/* ─── CONFIRM ─── */
-function Confirm({open,title,msg,onOk,onCancel}){
-  if(!open)return null;
-  return(
-    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.75)',zIndex:9998,
-      display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
-      <div className="card pop-in" style={{padding:28,maxWidth:380,width:'100%',border:`1px solid ${C.border}`}}>
-        <div style={{fontSize:16,fontWeight:600,marginBottom:10}}>{title}</div>
-        <div style={{fontSize:14,color:C.sub,marginBottom:24,lineHeight:1.65}}>{msg}</div>
-        <div style={{display:'flex',gap:10,justifyContent:'flex-end'}}>
-          <button className="btn" onClick={onCancel}
-            style={{padding:'8px 18px',fontSize:13,background:C.card2,color:C.sub,border:`1px solid ${C.border}`}}>Cancel</button>
-          <button className="btn" onClick={onOk}
-            style={{padding:'8px 18px',fontSize:13,background:C.red,color:'#fff'}}>Confirm</button>
+function buildScheduler(){
+  const cg=$('calGrid');
+  if(cg){
+    const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    days.forEach(d=>cg.innerHTML+=`<div class="cal-day-hdr">${d}</div>`);
+    // Jan 2025 starts on Wednesday (index 3)
+    for(let i=0;i<3;i++) cg.innerHTML+=`<div class="cal-cell" style="opacity:.2"></div>`;
+    const postDays={1:['ig','tw'],7:['li','fb'],10:['ig','tw','li'],14:['all'],15:['ig'],18:['fb','tw'],20:['li'],21:['ig','tw','li'],22:['ig','fb'],25:['tw'],28:['li','ig']};
+    for(let d=1;d<=31;d++){
+      const isToday=d===21;
+      let html=`<div class="cal-cell ${isToday?'today':''}"><div class="cal-date">${d}</div>`;
+      if(postDays[d]){
+        const plt=postDays[d];
+        if(plt.includes('ig')||plt.includes('all')) html+=`<div class="cal-post-dot cpd-ig">📸 IG</div>`;
+        if(plt.includes('tw')||plt.includes('all')) html+=`<div class="cal-post-dot cpd-tw">🐦 TW</div>`;
+        if(plt.includes('li')||plt.includes('all')) html+=`<div class="cal-post-dot cpd-li">💼 LI</div>`;
+        if(plt.includes('fb')||plt.includes('all')) html+=`<div class="cal-post-dot cpd-fb">👤 FB</div>`;
+      }
+      html+=`</div>`;
+      cg.innerHTML+=html;
+    }
+  }
+  const st=$('scheduledTable');
+  if(st){
+    SCHEDULED_POSTS.forEach(p=>{
+      st.innerHTML+=`<tr>
+        <td><div style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--amber)">${p.time}</div><div style="font-size:.65rem;color:var(--text3)">${p.dt}</div></td>
+        <td><div style="font-size:.78rem;color:var(--text2);max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.text.substring(0,80))}…</div></td>
+        <td><div style="display:flex;gap:3px">${p.plats.map(pl=>`<span style="padding:2px 5px;border-radius:4px;background:${PLATFORMS.find(x=>x.id===pl)?.bg||''};font-size:.62rem">${PLATFORMS.find(x=>x.id===pl)?.icon||''}</span>`).join('')}</div></td>
+        <td><span class="badge b-p">${p.type}</span></td>
+        <td><span class="badge ${p.s==='scheduled'?'b-a':'b-grey'}">${p.s}</span></td>
+        <td><div style="display:flex;gap:4px"><button class="sm-btn" onclick="showToast('Opening editor…','ai')">Edit</button><button class="sm-btn" style="color:var(--rose)" onclick="showToast('Post deleted','ok')">Delete</button></div></td>
+      </tr>`;
+    });
+  }
+}
+
+function buildQueue(){
+  const ql=$('queueList');if(!ql)return;
+  QUEUE_POSTS.forEach(p=>{
+    ql.innerHTML+=`<div class="post-card">
+      <div class="pc-time"><div class="pc-time-h">${p.time.replace(' AM','').replace(' PM','')}</div><div class="pc-time-d">${p.dt.substring(0,3)}</div></div>
+      <div class="pc-body">
+        <div class="pc-text">${esc(p.text)}</div>
+        <div class="pc-plats">${p.plats.map(pl=>`<span class="pc-plt" style="background:${PLATFORMS.find(x=>x.id===pl)?.bg||''};color:${PLATFORMS.find(x=>x.id===pl)?.color||'#fff'}">${PLATFORMS.find(x=>x.id===pl)?.icon||''} ${PLATFORMS.find(x=>x.id===pl)?.name||''}</span>`).join('')}</div>
+      </div>
+      <div class="pc-status">
+        <span class="status-badge ${p.s==='scheduled'?'sb-sched':'sb-draft'}">${p.s}</span>
+        <div class="pc-actions">
+          <button class="pa" onclick="showToast('Opening editor…','ai')">✏️</button>
+          <button class="pa" onclick="showToast('Post deleted','ok')">🗑️</button>
+          <button class="pa" onclick="showToast('Post published now!','ok')">🚀</button>
         </div>
       </div>
-    </div>
-  );
+    </div>`;
+  });
 }
 
-/* ─── UI ATOMS ─── */
-function Btn({children,onClick,variant='primary',disabled,full,sm,style:ex={}}){
-  const vs={
-    primary:{background:`linear-gradient(135deg,${C.accent},#4299e1)`,color:'#07090f',padding:sm?'6px 14px':'10px 22px',fontSize:sm?12:13},
-    ghost:{background:C.card2,color:C.sub,border:`1px solid ${C.border}`,padding:sm?'6px 14px':'10px 22px',fontSize:sm?12:13},
-    green:{background:`linear-gradient(135deg,${C.green},#38a169)`,color:'#07090f',padding:sm?'6px 14px':'10px 22px',fontSize:sm?12:13},
-    orange:{background:`linear-gradient(135deg,${C.orange},#dd6b20)`,color:'#07090f',padding:sm?'6px 14px':'10px 22px',fontSize:sm?12:13},
-    red:{background:`linear-gradient(135deg,${C.red},#c53030)`,color:'#fff',padding:sm?'6px 14px':'10px 22px',fontSize:sm?12:13},
-    purple:{background:`linear-gradient(135deg,${C.purple},#6b46c1)`,color:'#fff',padding:sm?'6px 14px':'10px 22px',fontSize:sm?12:13},
-    download:{background:`linear-gradient(135deg,#48bb78,#276749)`,color:'#fff',padding:sm?'6px 14px':'10px 22px',fontSize:sm?12:13},
-  };
-  return(
-    <button className="btn" disabled={disabled} onClick={!disabled?onClick:undefined}
-      style={{width:full?'100%':'auto',...vs[variant],...ex}}>{children}</button>
-  );
+function buildAIContent(){
+  const ct=$('captionTemplates');
+  if(ct){
+    AI_TEMPLATES.forEach(t=>{
+      ct.innerHTML+=`<div class="ai-card" style="margin-bottom:8px">
+        <div class="ai-card-top"><div class="ai-ic">${t.ic}</div><div><div class="ai-card-t">${t.title}</div><div class="ai-card-d">${t.preview.substring(0,80)}…</div></div></div>
+        <button class="ai-gen-btn" onclick="useTemplate('${t.title.replace(/'/g,"\\'")}')">Use Template →</button>
+      </div>`;
+    });
+  }
+  const fp=$('formatPerf');
+  if(fp){
+    [['Carousel','94%','var(--g1)'],['Reel/Video','88%','var(--g4)'],['Story','76%','var(--g5)'],['Thread','82%','var(--tw)'],['Single Image','64%','var(--green)'],['Text Only','58%','var(--amber)']].forEach(([l,v,c])=>{
+      fp.innerHTML+=`<div class="bh-row"><div class="bh-lbl" style="font-size:.65rem">${l}</div><div class="bh-track"><div class="bh-fill" style="width:${parseInt(v)}%;background:${c}"></div></div><div class="bh-val" style="font-size:.7rem">${v}</div></div>`;
+    });
+  }
 }
 
-function Field({label,value,onChange,type='text',placeholder='',options,mono,error,hint,required,disabled}){
-  const base={width:'100%',background:C.card,border:`1px solid ${error?C.red:C.border}`,
-    color:C.text,borderRadius:9,padding:'9px 13px',fontSize:14,
-    fontFamily:mono?'JetBrains Mono,monospace':'Space Grotesk,sans-serif'};
-  return(
-    <div style={{marginBottom:14}}>
-      <label className="mono" style={{fontSize:10,color:error?C.red:C.muted,display:'block',
-        marginBottom:5,textTransform:'uppercase',letterSpacing:1.1}}>
-        {label}{required&&<span style={{color:C.red}}> *</span>}
-      </label>
-      {options
-        ?<select value={value} onChange={e=>onChange(e.target.value)} disabled={disabled}
-            style={{...base,cursor:disabled?'not-allowed':'pointer'}}>
-            {options.map(o=><option key={o.v||o}value={o.v||o}>{o.l||o}</option>)}
-          </select>
-        :<input type={type} value={value} onChange={e=>onChange(e.target.value)}
-            placeholder={placeholder} disabled={disabled} style={base}/>
-      }
-      {error&&<div style={{fontSize:11,color:C.red,marginTop:4}}>⚠ {error}</div>}
-      {hint&&!error&&<div className="mono" style={{fontSize:10,color:C.green,marginTop:4}}>{hint}</div>}
-    </div>
-  );
-}
-
-function Stepper({steps,cur}){
-  return(
-    <div style={{display:'flex',alignItems:'center',marginBottom:28,overflowX:'auto',paddingBottom:4,gap:0}}>
-      {steps.map((s,i)=>(
-        <React.Fragment key={i}>
-          <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:5,flexShrink:0}}>
-            <div style={{width:30,height:30,borderRadius:'50%',display:'flex',alignItems:'center',
-              justifyContent:'center',fontSize:11,fontWeight:700,fontFamily:'JetBrains Mono,monospace',
-              background:i<cur?C.green:i===cur?C.accent:C.card2,
-              color:i<=cur?'#07090f':C.muted,
-              border:`2px solid ${i<cur?C.green:i===cur?C.accent:C.border}`,transition:'all .4s'}}>
-              {i<cur?'✓':i+1}
-            </div>
-            <span className="mono" style={{fontSize:9,color:i===cur?C.accent:C.muted,
-              textAlign:'center',maxWidth:68,whiteSpace:'nowrap'}}>{s}</span>
-          </div>
-          {i<steps.length-1&&(
-            <div style={{flex:1,height:2,minWidth:10,margin:'0 3px',marginBottom:18,
-              background:i<cur?C.green:C.border,transition:'background .4s'}}/>
-          )}
-        </React.Fragment>
-      ))}
-    </div>
-  );
-}
-
-function Loading({icon,title,sub,steps:ls}){
-  const [cur,setCur]=useState(0);
-  useEffect(()=>{
-    if(!ls?.length)return;
-    const t=setInterval(()=>setCur(p=>p<ls.length-1?p+1:p),850);
-    return()=>clearInterval(t);
-  },[ls]);
-  return(
-    <div style={{textAlign:'center',padding:'56px 20px'}} className="fade-up">
-      <div style={{fontSize:44,marginBottom:14,display:'inline-block'}} className="spin-anim">{icon}</div>
-      <div style={{fontSize:18,fontWeight:600,marginBottom:6}}>{title}</div>
-      {sub&&<div style={{fontSize:13,color:C.sub,marginBottom:24}}>{sub}</div>}
-      {ls&&(
-        <div className="card" style={{padding:'16px 22px',maxWidth:360,margin:'0 auto',textAlign:'left'}}>
-          {ls.map((s,i)=>(
-            <div key={i} style={{display:'flex',gap:10,alignItems:'center',padding:'7px 0',
-              fontSize:13,color:i<=cur?C.text:C.muted,borderBottom:`1px solid ${C.border}33`,transition:'color .3s'}}>
-              <span style={{color:i<cur?C.green:i===cur?C.accent:C.muted,fontSize:15,width:18}}
-                className={i===cur?'pulse-anim':''}>
-                {i<cur?'✓':i===cur?'→':'·'}
-              </span>
-              {s}
-            </div>
-          ))}
+function buildAnalytics(){
+  const ac=$('analyticsCards');
+  if(ac){
+    const metrics=[
+      {l:'Total Reach',v:'842K',ch:'+18%',ic:'👁️',c:'var(--g1)'},
+      {l:'Engagements',v:'68,400',ch:'+26%',ic:'❤️',c:'var(--g4)'},
+      {l:'New Followers',v:'23,080',ch:'+26%',ic:'👥',c:'var(--g5)'},
+      {l:'Link Clicks',v:'14,200',ch:'+20%',ic:'🔗',c:'var(--green)'},
+    ];
+    metrics.forEach(m=>{
+      ac.innerHTML+=`<div class="ag-card"><div style="font-size:1.2rem;margin-bottom:8px">${m.ic}</div><div style="font-size:1.5rem;font-weight:800;color:var(--text);font-family:'Syne',sans-serif;margin-bottom:2px">${m.v}</div><div style="font-size:.68rem;color:var(--text3);margin-bottom:2px">${m.l}</div><div style="font-size:.7rem;font-weight:700;color:var(--green)">${m.ch} this month</div></div>`;
+    });
+  }
+  // Perf chart
+  const pc=$('perfChart');
+  if(pc){
+    const days=['M','T','W','T','F','S','S'];
+    const reach=[68,84,72,96,88,110,104];const eng=[5,8,6,12,10,14,11];
+    const maxR=Math.max(...reach);
+    days.forEach((d,i)=>{
+      const rh=Math.round((reach[i]/maxR)*100);const eh=Math.round((eng[i]/maxR)*100*5);
+      pc.innerHTML+=`<div class="bcv-col">
+        <div class="bcv-track" style="display:flex;gap:2px;align-items:flex-end;height:100px">
+          <div style="flex:1;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;height:100px"><div class="bcv-fill" style="height:${rh}px;background:linear-gradient(to top,var(--g1),rgba(255,107,107,.4))"></div></div>
+          <div style="flex:1;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;height:100px"><div class="bcv-fill" style="height:${eh}px;background:linear-gradient(to top,var(--g4),rgba(77,150,255,.4))"></div></div>
         </div>
-      )}
-    </div>
-  );
+        <div class="bcv-lbl">${d}</div>
+      </div>`;
+    });
+  }
+  // Top posts
+  const tp=$('topPosts');
+  if(tp){
+    [['📸 Instagram Reel: "5 AI tools…"','42.8K reach','2.4K likes','8.2% ER'],
+     ['🐦 Twitter Thread: "7 startup tips…"','28.4K reach','1.8K likes','6.4% ER'],
+     ['💼 LinkedIn: "0 to 100K followers…"','18.2K reach','920 likes','9.8% ER']].forEach(([t,r,l,e])=>{
+      tp.innerHTML+=`<div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
+        <div style="flex:1;min-width:0"><div style="font-size:.8rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t}</div><div style="font-size:.68rem;color:var(--text3)">${r} · ${l}</div></div>
+        <span style="font-size:.72rem;font-weight:700;color:var(--green)">${e}</span>
+      </div>`;
+    });
+  }
+  // Analytics table
+  const at=$('analyticsTable');if(!at)return;
+  ANALYTICS_DATA.forEach(r=>{
+    at.innerHTML+=`<tr><td><div style="display:flex;align-items:center;gap:7px"><span>${r.icon}</span>${r.platform}</div></td><td class="mono">${r.followers}</td><td>${r.posts}</td><td class="num-g">${r.reach}</td><td class="mono">${r.likes}</td><td class="mono">${r.comments}</td><td style="font-weight:700;color:var(--green)">${r.er}</td><td class="num-g">${r.growth}</td></tr>`;
+  });
 }
 
-function InfoBanner({type,children}){
-  const cfg={
-    security:{bg:'rgba(99,179,237,.06)',border:'rgba(99,179,237,.2)',icon:'🔒',color:C.accent},
-    offline:{bg:'rgba(246,173,85,.07)',border:'rgba(246,173,85,.25)',icon:'📵',color:C.orange},
-    warning:{bg:'rgba(252,129,129,.07)',border:'rgba(252,129,129,.2)',icon:'⚠️',color:C.red},
-    info:{bg:'rgba(72,187,120,.06)',border:'rgba(72,187,120,.2)',icon:'ℹ',color:C.green},
-  };
-  const c=cfg[type]||cfg.info;
-  return(
-    <div style={{background:c.bg,border:`1px solid ${c.border}`,borderRadius:10,
-      padding:'10px 16px',marginBottom:16,display:'flex',gap:10,alignItems:'center'}}>
-      <span style={{fontSize:15}}>{c.icon}</span>
-      <div style={{flex:1,fontSize:12,color:C.textDim,lineHeight:1.55}}>{children}</div>
-    </div>
-  );
-}
-
-/* ────────────────────────────────────────────────
-   MODULE 1: TALLY AI ENTRY (FIXED — Real XML Export)
-──────────────────────────────────────────────────*/
-function TallyModule({toast,isOnline}){
-  const [step,setStep]=useState(0);
-  const [files,setFiles]=useState([]);
-  const [entries,setEntries]=useState([]);
-  const [editIdx,setEditIdx]=useState(null);
-  const [dragOver,setDragOver]=useState(false);
-  const [history,setHistory]=useState(()=>STORE.get('tally',[]))
-  const [showHist,setShowHist]=useState(false);
-  const [confirm,setConfirm]=useState(null);
-  const fileRef=useRef();
-
-  const LEDGERS=['Purchase Account','Expense Account','Fixed Assets','Sales Account',
-    'Sundry Creditors','Sundry Debtors','Office Expenses','Professional Fees',
-    'Freight Charges','Bank Charges','Interest Paid','Rent Expense'];
-
-  const validate=e=>{
-    const err={};
-    if(!e.party_name?.trim())err.party_name='Required';
-    if(e.gstin&&!validateGSTIN(e.gstin))err.gstin='Invalid GSTIN';
-    if(!e.date)err.date='Required';
-    if(!e.total||isNaN(+e.total)||+e.total<=0)err.total='Valid amount needed';
-    return err;
-  };
-
-  const pickFiles=e=>{
-    const f=Array.from(e.target.files||[]);
-    if(f.length>10){toast('Max 10 files at once','warning');return;}
-    setFiles(f);
-  };
-
-  const drop=e=>{
-    e.preventDefault();setDragOver(false);
-    const f=Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')||f.type==='application/pdf');
-    if(f.length>10){toast('Max 10 files','warning');return;}
-    setFiles(f);
-  };
-
-  const extract=async()=>{
-    if(!files.length){toast('Select files first','warning');return;}
-    if(!isOnline){toast('Internet required for AI extraction','error');return;}
-    setStep(1);
-    const res=[];
-    for(const file of files){
-      const b64=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result.split(',')[1]);fr.readAsDataURL(file);});
-      try{
-        let raw;
-        if(file.type.startsWith('image/')){
-          const resp=await fetch('https://api.anthropic.com/v1/messages',{
-            method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
-              system:'Indian CA expert. Return ONLY pure JSON, no markdown.',
-              messages:[{role:'user',content:[
-                {type:'image',source:{type:'base64',media_type:file.type,data:b64}},
-                {type:'text',text:'Extract invoice. Return ONLY JSON: {"party_name":"","gstin":"","invoice_no":"","date":"DD/MM/YYYY","items":[{"description":"","qty":1,"rate":0,"amount":0}],"subtotal":0,"igst":0,"cgst":0,"sgst":0,"total":0,"voucher_type":"Purchase","ledger_head":"Purchase Account","narration":"","tds_applicable":false,"tds_section":"","tds_amount":0}'}
-              ]}]})
-          });
-          const d=await resp.json();raw=d.content?.[0]?.text||'{}';
-        }else{
-          raw=await callAI('Indian CA expert. Return ONLY pure JSON.',
-            `PDF bill: "${file.name}". Generate sample JSON: {"party_name":"Sample Vendor","gstin":"","invoice_no":"INV-001","date":"01/04/2025","items":[{"description":"Services","qty":1,"rate":10000,"amount":10000}],"subtotal":10000,"igst":1800,"cgst":0,"sgst":0,"total":11800,"voucher_type":"Purchase","ledger_head":"Purchase Account","narration":"Purchase entry for ${file.name}","tds_applicable":false,"tds_section":"","tds_amount":0}`);
-        }
-        const obj=safeJSON(raw);
-        const errs=validate(obj);
-        res.push({...obj,_file:file.name,_status:Object.keys(errs).length?'warning':'ok',_errs:errs});
-      }catch(e){
-        res.push({party_name:file.name.replace(/\.[^.]+$/,''),gstin:'',invoice_no:'',
-          date:'',subtotal:0,igst:0,cgst:0,sgst:0,total:0,voucher_type:'Purchase',
-          ledger_head:'Purchase Account',narration:'',tds_applicable:false,tds_section:'',tds_amount:0,
-          _file:file.name,_status:'error',_errs:{_:e.message}});
-      }
-    }
-    setEntries(res);setStep(2);
-    const bad=res.filter(r=>r._status==='error').length;
-    if(bad)toast(`${bad} file(s) could not be read — review manually`,'warning');
-  };
-
-  const upd=(i,k,v)=>setEntries(p=>p.map((e,j)=>i===j?{...e,[k]:v,_errs:validate({...e,[k]:v})}:e));
-  const del=(i)=>setEntries(p=>p.filter((_,j)=>j!==i));
-
-  // FIX 1: Real Tally XML Export
-  const exportXML=()=>{
-    if(!entries.length)return;
-    const allValid=entries.every(e=>Object.keys(validate(e)).length===0);
-    if(!allValid){toast('Fix validation errors before exporting','error');return;}
-    const xml=genTallyXML(entries);
-    downloadFile(xml,`tally_import_${Date.now()}.xml`,'application/xml');
-    toast('Tally XML downloaded — import in Tally Prime via Gateway → Import Data','success');
-  };
-
-  // FIX 2: Save to history + show Tally import instructions
-  const saveEntries=()=>{
-    const allValid=entries.every(e=>Object.keys(validate(e)).length===0);
-    if(!allValid){toast('Fix all errors first','error');return;}
-    setConfirm({
-      title:'Save & Export?',
-      msg:`${entries.length} vouchers save होंगे + Tally XML file download होगी। जिसे Tally Prime में import कर सकते हैं।`,
-      onOk:()=>{
-        setConfirm(null);
-        const updated=[...history,...entries.map(e=>({...e,_saved:new Date().toISOString()}))];
-        setHistory(updated);STORE.set('tally',updated);
-        exportXML();
-        setStep(3);
-        toast(`${entries.length} entries saved + XML exported`,'success');
+function buildAudience(){
+  const ab=$('ageBar');
+  if(ab){[['18-24','42%','var(--g1)'],['25-34','34%','var(--g4)'],['35-44','14%','var(--g5)'],['45-54','7%','var(--green)'],['55+','3%','var(--amber)']].forEach(([l,v,c])=>{
+    ab.innerHTML+=`<div class="bh-row"><div class="bh-lbl">${l}</div><div class="bh-track"><div class="bh-fill" style="width:${parseInt(v)}%;background:${c}"></div></div><div class="bh-val">${v}</div></div>`;
+  });}
+  const lb=$('locBar');
+  if(lb){[['India','48%','var(--g1)'],['USA','22%','var(--g4)'],['UK','8%','var(--g5)'],['Canada','6%','var(--green)'],['Australia','4%','var(--amber)'],['Others','12%','var(--text3)']].forEach(([l,v,c])=>{
+    lb.innerHTML+=`<div class="bh-row"><div class="bh-lbl">${l}</div><div class="bh-track"><div class="bh-fill" style="width:${parseInt(v)}%;background:${c}"></div></div><div class="bh-val">${v}</div></div>`;
+  });}
+  // Heatmap
+  const hm=$('heatmap');
+  if(hm){
+    hm.innerHTML+='<div class="hm-hdr"></div>';
+    for(let h=0;h<24;h++) hm.innerHTML+=`<div class="hm-hdr">${h}</div>`;
+    const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const hotHours={Mon:[7,8,12,13,19,20],Tue:[8,12,13,18,19],Wed:[7,8,10,12,19,20,21],Thu:[8,12,18,19,20],Fri:[9,12,17,18],Sat:[10,11,12,20,21],Sun:[11,12,20,21]};
+    days.forEach(d=>{
+      hm.innerHTML+=`<div class="hm-day">${d}</div>`;
+      for(let h=0;h<24;h++){
+        const isHot=hotHours[d]?.includes(h);const isMed=Math.random()>.6;
+        const bg=isHot?`rgba(255,107,107,${0.4+Math.random()*.4})`:isMed?`rgba(251,191,36,${0.15+Math.random()*.15})`:`rgba(255,255,255,.03)`;
+        hm.innerHTML+=`<div class="hm-cell" style="background:${bg}" title="${d} ${h}:00"></div>`;
       }
     });
-  };
-
-  const reset=()=>{setStep(0);setFiles([]);setEntries([]);setEditIdx(null);};
-
-  return(
-    <div className="fade-up">
-      {!isOnline&&<InfoBanner type="offline">Offline mode — AI extraction unavailable। Manual entry या saved data देखें।</InfoBanner>}
-      <InfoBanner type="security">GSTIN/PAN AI को नहीं भेजा जाता। Real Tally XML export available है — Gateway of Tally → Import Data में use करें।</InfoBanner>
-      <Stepper steps={['Upload','Extract','Verify','Export & Save','Done']} cur={step}/>
-
-      {step===0&&(
-        <div className="grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
-          <div>
-            <div className="drop-zone" style={{padding:32,textAlign:'center'}}
-              onClick={()=>fileRef.current.click()}
-              onDragOver={e=>{e.preventDefault();setDragOver(true);}}
-              onDragLeave={()=>setDragOver(false)} onDrop={drop}
-              style={{padding:32,textAlign:'center',background:dragOver?'rgba(99,179,237,.04)':'transparent',
-                border:`2px dashed ${dragOver?C.accent:C.border}`,borderRadius:14,cursor:'pointer',transition:'all .2s'}}>
-              <input ref={fileRef} type="file" multiple accept="image/*,.pdf" style={{display:'none'}} onChange={pickFiles}/>
-              <div style={{fontSize:40,marginBottom:12}}>📄</div>
-              <div style={{fontSize:15,fontWeight:600,marginBottom:6}}>Bills Drop करें या Click करें</div>
-              <div style={{fontSize:12,color:C.sub}}>Images / PDFs · Max 10 files</div>
-              {files.length>0&&(
-                <div style={{marginTop:16,background:C.card2,borderRadius:10,padding:12,textAlign:'left'}}>
-                  {files.map((f,i)=>(
-                    <div key={i} className="mono" style={{fontSize:11,color:C.accent,padding:'3px 0',display:'flex',gap:8}}>
-                      📎 {f.name}<span style={{color:C.muted,marginLeft:'auto'}}>{(f.size/1024).toFixed(0)}KB</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div style={{display:'flex',gap:10,marginTop:12}}>
-              <Btn full onClick={extract} disabled={!files.length||!isOnline}>
-                {isOnline?'AI से Extract करें →':'Offline'}
-              </Btn>
-              {history.length>0&&<Btn variant="ghost" onClick={()=>setShowHist(true)}>History ({history.length})</Btn>}
-            </div>
-          </div>
-          <div className="card" style={{padding:22}}>
-            <div className="mono" style={{fontSize:10,color:C.accent,marginBottom:16,letterSpacing:1}}>TALLY INTEGRATION GUIDE</div>
-            {[
-              ['Step 1','Bills upload करें (photo/PDF)'],
-              ['Step 2','AI data extract करेगा automatically'],
-              ['Step 3','Review और corrections करें'],
-              ['Step 4','Export XML click करें — file download होगी'],
-              ['Step 5','Tally Prime open करें'],
-              ['Step 6','Gateway of Tally → Import Data → XML file select करें'],
-            ].map(([s,t],i)=>(
-              <div key={i} style={{display:'flex',gap:12,padding:'8px 0',borderBottom:`1px solid ${C.border}33`}}>
-                <span className="mono" style={{fontSize:10,color:C.accent,flexShrink:0,minWidth:48}}>{s}</span>
-                <span style={{fontSize:13,color:C.textDim}}>{t}</span>
-              </div>
-            ))}
-            <div style={{marginTop:16,background:C.accentDim,borderRadius:10,padding:12}}>
-              <div className="mono" style={{fontSize:10,color:C.accent,marginBottom:4}}>📁 XML FORMAT</div>
-              <div style={{fontSize:11,color:C.sub}}>TALLYMESSAGE format में real Tally-compatible XML generate होती है। Tally Prime 2.x and above compatible।</div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {step===1&&<Loading icon="⚙" title="AI Extract कर रहा है..." sub={`${files.length} files processing`}
-        steps={['Image optimize हो रही है','Text extract हो रहा है','Data structure बन रहा है','Validation हो रही है']}/>}
-
-      {step===2&&(
-        <div>
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,flexWrap:'wrap',gap:10}}>
-            <div>
-              <div style={{fontSize:16,fontWeight:600}}>{entries.filter(e=>e._status==='ok').length}/{entries.length} Entries Valid</div>
-              <div style={{fontSize:12,color:C.sub}}>Review → Edit → Export Tally XML</div>
-            </div>
-            <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
-              <Btn variant="ghost" sm onClick={reset}>↩ Reset</Btn>
-              <Btn variant="download" sm onClick={exportXML} disabled={!entries.length}>⬇ XML Export</Btn>
-              <Btn variant="green" sm onClick={saveEntries} disabled={!entries.length}>💾 Save + Export</Btn>
-            </div>
-          </div>
-          {entries.map((e,idx)=>{
-            const errs=validate(e);const hasErr=Object.keys(errs).length>0;
-            return(
-              <div key={idx} className="card slide-in" style={{padding:20,marginBottom:14,
-                border:`1px solid ${e._status==='error'?C.red+'55':hasErr?C.yellow+'55':C.border}`}}>
-                <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12,flexWrap:'wrap',gap:8}}>
-                  <div>
-                    <div style={{fontSize:15,fontWeight:600}}>{e.party_name||'Unknown Party'}</div>
-                    <div className="mono" style={{fontSize:10,color:C.muted}}>{e.invoice_no} · {e.date} · {e._file}</div>
-                    {hasErr&&<div style={{fontSize:11,color:C.yellow,marginTop:3}}>⚠ {Object.keys(errs).length} validation error(s)</div>}
-                  </div>
-                  <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center'}}>
-                    <span className="badge tag-blue">{e.voucher_type||'Purchase'}</span>
-                    {e.tds_applicable&&<span className="badge tag-purple">TDS {e.tds_section}</span>}
-                    <span className={`badge ${e._status==='ok'&&!hasErr?'tag-valid':hasErr?'tag-warn':'tag-error'}`}>
-                      {!hasErr?'✓ Valid':e._status==='error'?'✗ Error':'⚠ Review'}
-                    </span>
-                    <button onClick={()=>setEditIdx(editIdx===idx?null:idx)}
-                      style={{background:C.card2,border:`1px solid ${C.border}`,color:C.sub,padding:'4px 12px',
-                        borderRadius:7,cursor:'pointer',fontSize:11,fontFamily:'Space Grotesk,sans-serif'}}>
-                      {editIdx===idx?'✓ Done':'✏ Edit'}
-                    </button>
-                    <button onClick={()=>del(idx)}
-                      style={{background:'none',border:'none',color:C.muted,cursor:'pointer',fontSize:16,padding:'2px 6px'}}>✕</button>
-                  </div>
-                </div>
-                {editIdx===idx?(
-                  <div className="grid-3" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
-                    <Field label="Party Name" value={e.party_name||''} onChange={v=>upd(idx,'party_name',v)} error={errs.party_name} required/>
-                    <Field label="GSTIN" value={e.gstin||''} onChange={v=>upd(idx,'gstin',v.toUpperCase())} mono placeholder="07AABCS1234F1Z5"
-                      error={errs.gstin} hint={e.gstin&&validateGSTIN(e.gstin)?'✓ Valid GSTIN':''}/>
-                    <Field label="Invoice No" value={e.invoice_no||''} onChange={v=>upd(idx,'invoice_no',v)}/>
-                    <Field label="Date (DD/MM/YYYY)" value={e.date||''} onChange={v=>upd(idx,'date',v)} error={errs.date} required/>
-                    <Field label="Subtotal ₹" value={e.subtotal||''} type="number" onChange={v=>upd(idx,'subtotal',v)}/>
-                    <Field label="Total ₹" value={e.total||''} type="number" onChange={v=>upd(idx,'total',v)} error={errs.total} required/>
-                    <Field label="IGST ₹" value={e.igst||''} type="number" onChange={v=>upd(idx,'igst',v)}/>
-                    <Field label="CGST ₹" value={e.cgst||''} type="number" onChange={v=>upd(idx,'cgst',v)}/>
-                    <Field label="SGST ₹" value={e.sgst||''} type="number" onChange={v=>upd(idx,'sgst',v)}/>
-                    <Field label="Ledger Head" value={e.ledger_head||'Purchase Account'} onChange={v=>upd(idx,'ledger_head',v)} options={LEDGERS}/>
-                    <Field label="Voucher Type" value={e.voucher_type||'Purchase'} onChange={v=>upd(idx,'voucher_type',v)}
-                      options={['Purchase','Sales','Expense','Journal','Receipt','Payment','Contra','Credit Note','Debit Note']}/>
-                    <div/>
-                    <div style={{gridColumn:'1/-1'}}>
-                      <label className="mono" style={{fontSize:10,color:C.muted,display:'block',marginBottom:5}}>NARRATION</label>
-                      <textarea value={e.narration||''} onChange={ev=>upd(idx,'narration',ev.target.value)}
-                        rows={2} style={{width:'100%',background:C.card,border:`1px solid ${C.border}`,
-                          color:C.text,borderRadius:9,padding:'9px 13px',fontSize:13,resize:'vertical',fontFamily:'Space Grotesk,sans-serif'}}/>
-                    </div>
-                    <div style={{gridColumn:'1/-1',display:'flex',gap:16,alignItems:'center',flexWrap:'wrap'}}>
-                      <label style={{fontSize:13,cursor:'pointer',display:'flex',gap:8,alignItems:'center'}}>
-                        <input type="checkbox" checked={!!e.tds_applicable} onChange={ev=>upd(idx,'tds_applicable',ev.target.checked)}/>
-                        TDS Applicable
-                      </label>
-                      {e.tds_applicable&&<>
-                        <Field label="Section" value={e.tds_section||''} onChange={v=>upd(idx,'tds_section',v)}
-                          options={['194A','194C','194D','194G','194H','194I','194J','194LA']}/>
-                        <Field label="TDS Amount ₹" value={e.tds_amount||''} type="number" onChange={v=>upd(idx,'tds_amount',v)}/>
-                      </>}
-                    </div>
-                  </div>
-                ):(
-                  <div style={{display:'flex',gap:24,flexWrap:'wrap'}}>
-                    {[['Subtotal','subtotal'],['IGST','igst'],['CGST','cgst'],['SGST','sgst'],['Total','total']].map(([l,k])=>(
-                      <div key={k}>
-                        <div className="mono" style={{fontSize:9,color:C.muted}}>{l}</div>
-                        <div className="mono" style={{fontSize:14,color:k==='total'?C.accent:C.text,fontWeight:k==='total'?600:400}}>
-                          ₹{Number(e[k]||0).toLocaleString('en-IN')}
-                        </div>
-                      </div>
-                    ))}
-                    {Number(e.tds_amount)>0&&(
-                      <div>
-                        <div className="mono" style={{fontSize:9,color:C.purple}}>TDS ({e.tds_section})</div>
-                        <div className="mono" style={{fontSize:14,color:C.purple}}>₹{Number(e.tds_amount).toLocaleString('en-IN')}</div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {step===3&&(
-        <div style={{textAlign:'center',padding:'50px 20px'}} className="fade-up">
-          <div style={{fontSize:52,marginBottom:16}}>🎉</div>
-          <div style={{fontSize:20,fontWeight:700,color:C.green,marginBottom:8}}>Saved & XML Exported!</div>
-          <div className="card" style={{padding:22,maxWidth:460,margin:'16px auto',textAlign:'left'}}>
-            <div className="mono" style={{fontSize:10,color:C.accent,marginBottom:12}}>TALLY IMPORT STEPS</div>
-            {['Tally Prime open करें → Company select करें',
-              'Gateway of Tally → Import Data चुनें',
-              'Vouchers / Masters select करें',
-              'Downloaded XML file select करें → Import click करें',
-              'Success message आएगा — Vouchers auto-create होंगे'
-            ].map((s,i)=>(
-              <div key={i} style={{display:'flex',gap:10,padding:'7px 0',borderBottom:`1px solid ${C.border}44`,fontSize:13,color:C.textDim}}>
-                <span className="mono" style={{color:C.green,fontSize:11,flexShrink:0}}>{i+1}.</span>{s}
-              </div>
-            ))}
-          </div>
-          <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap',marginTop:16}}>
-            <Btn onClick={reset}>📄 More Bills Upload करें</Btn>
-            <Btn variant="download" onClick={exportXML}>⬇ XML फिर Download करें</Btn>
-          </div>
-        </div>
-      )}
-
-      {/* History Modal */}
-      {showHist&&(
-        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.8)',zIndex:1000,
-          display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
-          <div className="card pop-in" style={{padding:24,maxWidth:700,width:'100%',maxHeight:'80vh',overflow:'auto'}}>
-            <div style={{display:'flex',justifyContent:'space-between',marginBottom:16}}>
-              <div style={{fontSize:16,fontWeight:600}}>Tally History ({history.length})</div>
-              <div style={{display:'flex',gap:10}}>
-                <Btn variant="download" sm onClick={()=>{
-                  const xml=genTallyXML(history);
-                  downloadFile(xml,`tally_history_${Date.now()}.xml`,'application/xml');
-                  toast('Full history XML exported','success');
-                }}>⬇ Export All XML</Btn>
-                <button onClick={()=>setShowHist(false)}
-                  style={{background:'none',border:'none',color:C.sub,fontSize:20,cursor:'pointer'}}>✕</button>
-              </div>
-            </div>
-            {history.slice().reverse().map((e,i)=>(
-              <div key={i} style={{display:'flex',justifyContent:'space-between',padding:'10px 0',
-                borderBottom:`1px solid ${C.border}44`,flexWrap:'wrap',gap:8}}>
-                <div>
-                  <div style={{fontSize:13,fontWeight:600}}>{e.party_name}</div>
-                  <div className="mono" style={{fontSize:10,color:C.muted}}>{e.invoice_no} · {e.date} · {e.voucher_type}</div>
-                </div>
-                <span className="mono" style={{fontSize:14,color:C.accent}}>₹{Number(e.total||0).toLocaleString('en-IN')}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-      <Confirm open={!!confirm} title={confirm?.title} msg={confirm?.msg}
-        onOk={confirm?.onOk} onCancel={()=>setConfirm(null)}/>
+  }
+  // Gender
+  const gc=$('genderChart');
+  if(gc){
+    gc.innerHTML=`<div style="display:flex;gap:14px;justify-content:center;margin-bottom:12px">
+      <div style="text-align:center"><div style="font-size:1.8rem;font-weight:900;color:var(--g4)">58%</div><div style="font-size:.72rem;color:var(--text3)">Male</div></div>
+      <div style="text-align:center"><div style="font-size:1.8rem;font-weight:900;color:var(--g1)">38%</div><div style="font-size:.72rem;color:var(--text3)">Female</div></div>
+      <div style="text-align:center"><div style="font-size:1.8rem;font-weight:900;color:var(--text3)">4%</div><div style="font-size:.72rem;color:var(--text3)">Other</div></div>
     </div>
-  );
+    <div style="height:8px;border-radius:4px;overflow:hidden;display:flex">
+      <div style="width:58%;background:var(--g4)"></div>
+      <div style="width:38%;background:var(--g1)"></div>
+      <div style="flex:1;background:var(--text3)"></div>
+    </div>`;
+  }
+  const dc=$('deviceChart');
+  if(dc){
+    [['📱 Mobile','72%','var(--g1)'],['💻 Desktop','22%','var(--g4)'],['📟 Tablet','6%','var(--g5)']].forEach(([l,v,c])=>{
+      dc.innerHTML+=`<div class="bh-row" style="margin-bottom:10px"><div style="font-size:.74rem;color:var(--text2);min-width:80px">${l}</div><div class="bh-track"><div class="bh-fill" style="width:${parseInt(v)}%;background:${c}"></div></div><div class="bh-val">${v}</div></div>`;
+    });
+  }
 }
 
-/* ────────────────────────────────────────────────
-   MODULE 2: AUTO GST FILING (FIXED — Real JSON download)
-──────────────────────────────────────────────────*/
-function AutoGSTModule({toast,isOnline,clients}){
-  const [step,setStep]=useState(0);
-  const [form,setForm]=useState({client:'',gstin:'',period:'March 2025',gstType:'GSTR-1'});
-  const [analysis,setAnalysis]=useState(null);
-  const [errs,setErrs]=useState({});
-  const [filed,setFiled]=useState(()=>STORE.get('gst_filed',[]));
-  const setF=(k,v)=>setForm(p=>({...p,[k]:v}));
-
-  const PERIODS=['April 2025','March 2025','February 2025','January 2025',
-    'December 2024','November 2024','October 2024','Q4 FY 2024-25','Q3 FY 2024-25'];
-  const TYPES=['GSTR-1','GSTR-3B','GSTR-2B Reconciliation','GSTR-9 Annual','GSTR-4 Composition'];
-
-  const validate=()=>{
-    const e={};
-    if(!form.client)e.client='Client required';
-    if(!validateGSTIN(form.gstin))e.gstin='Invalid GSTIN (format: 07AABCS1234F1Z5)';
-    const dup=filed.find(r=>r.client===form.client&&r.period===form.period&&r.type===form.gstType);
-    if(dup)e._dup=`Already filed! ARN: ${dup.arn}`;
-    setErrs(e);return Object.keys(e).length===0;
-  };
-
-  const analyze=async()=>{
-    if(!validate())return;
-    if(!isOnline){toast('Internet required','error');return;}
-    setStep(1);
-    try{
-      const raw=await callAI('Indian GST expert. Return ONLY JSON.',
-        `Generate ${form.gstType} analysis for ${form.period}. Return: {"client":"${form.client}","period":"${form.period}","filing_type":"${form.gstType}","summary":{"taxable_turnover":842500,"b2b_invoices":24,"b2c_invoices":38,"igst":45000,"cgst":18000,"sgst":18000,"total_tax":81000,"itc_available":62000,"net_payable":19000},"compliance_check":[{"item":"GSTR-1 Previous","status":"OK","note":"Filed"},{"item":"ITC Reconciliation","status":"OK","note":"Matched"},{"item":"Reverse Charge","status":"OK","note":"Not applicable"}],"late_fee":0,"interest":0,"due_date":"20 Apr 2025","days_remaining":8,"recommendations":["Keep GSTR-2B vs books reconciled monthly"]}`);
-      const obj=safeJSON(raw);
-      obj.gstin=form.gstin;
-      setAnalysis(obj);
-    }catch{
-      setAnalysis({client:form.client,gstin:form.gstin,period:form.period,filing_type:form.gstType,
-        summary:{taxable_turnover:842500,b2b_invoices:24,b2c_invoices:38,igst:45000,cgst:18000,sgst:18000,total_tax:81000,itc_available:62000,net_payable:19000},
-        compliance_check:[{item:'GSTR-1 Filed',status:'OK',note:'On time'},{item:'ITC Reconciliation',status:'Warning',note:'₹2,400 mismatch'},{item:'Late Fee',status:'OK',note:'Nil'}],
-        late_fee:0,interest:0,due_date:'20 Apr 2025',days_remaining:8,
-        recommendations:['Reconcile ITC ₹2,400 mismatch with GSTR-2B']});
-      toast('Using fallback data (offline)','warning');
-    }
-    setStep(2);
-  };
-
-  // FIX: Download real GSTN JSON + show instructions
-  const downloadGSTJSON=()=>{
-    const json=genGSTJSON(analysis,form);
-    downloadFile(JSON.stringify(json,null,2),`${form.gstType.replace(/[^a-zA-Z0-9]/g,'_')}_${form.period.replace(/ /g,'_')}_${form.gstin}.json`,'application/json');
-    toast('JSON downloaded — GST Portal → Returns → Upload JSON','success');
-  };
-
-  const fileNow=async()=>{
-    setStep(3);
-    await new Promise(r=>setTimeout(r,2200));
-    const arn=`AA${Math.floor(Math.random()*9000+1000)}25${Math.floor(Math.random()*900+100)}`;
-    const rec={client:form.client,gstin:form.gstin,period:form.period,type:form.gstType,
-      arn,filedAt:new Date().toISOString(),tax:analysis?.summary?.net_payable||0};
-    const updated=[...filed,rec];
-    setFiled(updated);STORE.set('gst_filed',updated);
-    downloadGSTJSON(); // Auto-download JSON on filing
-    toast(`${form.gstType} prepared — ARN: ${arn} · JSON downloaded`,'success');
-    setStep(4);
-  };
-
-  const sc=s=>s==='OK'?C.green:s==='Warning'?C.yellow:C.red;
-  const reset=()=>{setStep(0);setAnalysis(null);setErrs({});};
-  const clientOpts=clients.length?clients.map(c=>({v:c.name,l:c.name})):[{v:'',l:'— Client Select करें —'}];
-
-  return(
-    <div className="fade-up">
-      {!isOnline&&<InfoBanner type="offline">Offline — fallback data use होगा। Portal submission unavailable।</InfoBanner>}
-      <InfoBanner type="security">Real GSTN-format JSON file generate होती है। Portal पर upload करके actual filing करें।</InfoBanner>
-      <Stepper steps={['Setup','Analyze','Review','Prepare','Done']} cur={step}/>
-
-      {step===0&&(
-        <div className="grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
-          <div className="card" style={{padding:24}}>
-            <div className="mono" style={{fontSize:10,color:C.accent,marginBottom:20,letterSpacing:1}}>GST FILING SETUP</div>
-            {errs._dup&&<InfoBanner type="warning">{errs._dup}</InfoBanner>}
-            {clients.length===0&&<InfoBanner type="info">Client Management में clients add करें पहले। या manual GSTIN enter करें।</InfoBanner>}
-            <Field label="Client Name" value={form.client} onChange={v=>{setF('client',v);const c=clients.find(x=>x.name===v);if(c)setF('gstin',c.gstin);}} options={clientOpts} error={errs.client}/>
-            <Field label="GSTIN" value={form.gstin} onChange={v=>setF('gstin',v.toUpperCase())} mono
-              placeholder="07AABCS1234F1Z5" error={errs.gstin}
-              hint={!errs.gstin&&validateGSTIN(form.gstin)?'✓ Valid GSTIN':''}/>
-            <Field label="Tax Period" value={form.period} onChange={v=>setF('period',v)} options={PERIODS}/>
-            <Field label="Return Type" value={form.gstType} onChange={v=>setF('gstType',v)} options={TYPES}/>
-            <div style={{marginTop:20,display:'flex',gap:10}}>
-              <Btn full onClick={analyze} disabled={!isOnline}>Analyze & Prepare →</Btn>
-            </div>
-            {filed.length>0&&(
-              <div style={{marginTop:16,background:C.card2,borderRadius:10,padding:14}}>
-                <div className="mono" style={{fontSize:10,color:C.muted,marginBottom:8}}>RECENT FILINGS</div>
-                {filed.slice(-4).reverse().map((r,i)=>(
-                  <div key={i} style={{fontSize:12,color:C.sub,padding:'4px 0',display:'flex',justifyContent:'space-between',gap:8}}>
-                    <span>{r.client} · {r.type}</span>
-                    <span className="badge tag-valid">{r.period}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="card" style={{padding:24}}>
-            <div className="mono" style={{fontSize:10,color:C.accent,marginBottom:16,letterSpacing:1}}>HOW REAL FILING WORKS</div>
-            {[['1','AI से data prepare होता है और GSTN JSON generate होती है'],
-              ['2','JSON file download करें (automatic होती है)'],
-              ['3','GST Portal (gst.gov.in) login करें'],
-              ['4','Returns → File Returns → Select period'],
-              ['5','Upload JSON → Validate → Sign (DSC/EVC)'],
-              ['6','Submit → ARN generate होता है'],
-            ].map(([n,t],i)=>(
-              <div key={i} style={{display:'flex',gap:12,padding:'9px 0',borderBottom:`1px solid ${C.border}33`}}>
-                <div style={{width:24,height:24,borderRadius:'50%',background:C.accentDim,
-                  display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,
-                  color:C.accent,fontFamily:'JetBrains Mono,monospace',flexShrink:0}}>{n}</div>
-                <div style={{fontSize:13,color:C.textDim,lineHeight:1.5}}>{t}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {step===1&&<Loading icon="🧮" title="AI Analyze कर रहा है..." sub={`${form.gstType} · ${form.client} · ${form.period}`}
-        steps={['Turnover compute हो रहा है','ITC verify हो रही है','Compliance check','Summary prepare हो रही है']}/>}
-
-      {step===2&&analysis&&(
-        <div>
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20,flexWrap:'wrap',gap:10}}>
-            <div>
-              <div style={{fontSize:16,fontWeight:600}}>{analysis.filing_type} — {analysis.client}</div>
-              <div style={{fontSize:12,color:C.sub}}>GSTIN: {analysis.gstin} · {analysis.period} · Due: {analysis.due_date}
-                <span style={{marginLeft:10,color:analysis.days_remaining<=3?C.red:C.yellow}}>
-                  ({analysis.days_remaining} days left)
-                </span>
-              </div>
-            </div>
-            <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
-              <Btn variant="ghost" sm onClick={reset}>↩ Back</Btn>
-              <Btn variant="download" sm onClick={downloadGSTJSON}>⬇ JSON Download</Btn>
-              <Btn variant="green" sm onClick={fileNow}>Prepare & Download →</Btn>
-            </div>
-          </div>
-          <div className="grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-            <div className="card" style={{padding:20}}>
-              <div className="mono" style={{fontSize:10,color:C.accent,marginBottom:14,letterSpacing:1}}>TAX SUMMARY</div>
-              {[['Taxable Turnover',analysis.summary.taxable_turnover,C.text,true],
-                ['B2B Invoices',analysis.summary.b2b_invoices+' nos',C.sub,false],
-                ['B2C Invoices',analysis.summary.b2c_invoices+' nos',C.sub,false],
-                ['IGST',analysis.summary.igst,C.accent,false],
-                ['CGST',analysis.summary.cgst,C.accent,false],
-                ['SGST',analysis.summary.sgst,C.accent,false],
-                ['Total Tax',analysis.summary.total_tax,C.yellow,false],
-                ['ITC Available',analysis.summary.itc_available,C.green,false],
-                ['Net Payable',analysis.summary.net_payable,C.orange,true],
-              ].map(([l,v,col,bold],i)=>(
-                <div key={i} style={{display:'flex',justifyContent:'space-between',padding:'8px 0',borderBottom:`1px solid ${C.border}33`}}>
-                  <span style={{fontSize:13,color:C.sub}}>{l}</span>
-                  <span className="mono" style={{fontSize:14,color:col,fontWeight:bold?600:400}}>
-                    {typeof v==='number'?'₹'+v.toLocaleString('en-IN'):v}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div>
-              <div className="card" style={{padding:20,marginBottom:12}}>
-                <div className="mono" style={{fontSize:10,color:C.accent,marginBottom:14,letterSpacing:1}}>COMPLIANCE CHECK</div>
-                {(analysis.compliance_check||[]).map((c,i)=>(
-                  <div key={i} style={{display:'flex',gap:10,padding:'9px 0',borderBottom:`1px solid ${C.border}33`}}>
-                    <span style={{color:sc(c.status),fontSize:16,flexShrink:0}}>{c.status==='OK'?'✓':c.status==='Warning'?'⚠':'✗'}</span>
-                    <div style={{flex:1}}>
-                      <div style={{fontSize:13,fontWeight:500}}>{c.item}</div>
-                      <div style={{fontSize:11,color:C.muted}}>{c.note}</div>
-                    </div>
-                    <span className={`badge ${c.status==='OK'?'tag-valid':c.status==='Warning'?'tag-warn':'tag-error'}`}>{c.status}</span>
-                  </div>
-                ))}
-              </div>
-              {analysis.recommendations?.length>0&&(
-                <div style={{background:`${C.yellow}11`,border:`1px solid ${C.yellow}33`,borderRadius:12,padding:16}}>
-                  <div className="mono" style={{fontSize:10,color:C.yellow,marginBottom:8}}>RECOMMENDATIONS</div>
-                  {analysis.recommendations.map((r,i)=><div key={i} style={{fontSize:13,color:C.sub,padding:'3px 0'}}>→ {r}</div>)}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {step===3&&<Loading icon="📋" title="GSTN JSON Prepare हो रहा है..." sub="Real GSTN format generate हो रही है"
-        steps={['Data validate हो रहा है','JSON structure बन रहा है','File prepare हो रही है','Download ready']}/>}
-
-      {step===4&&(
-        <div style={{textAlign:'center',padding:'50px 20px'}} className="fade-up">
-          <div style={{fontSize:52,marginBottom:16}}>✅</div>
-          <div style={{fontSize:20,fontWeight:700,color:C.green,marginBottom:8}}>{form.gstType} JSON Ready!</div>
-          <div className="card" style={{padding:22,maxWidth:460,margin:'16px auto',textAlign:'left'}}>
-            <div className="mono" style={{fontSize:10,color:C.accent,marginBottom:12}}>PORTAL UPLOAD STEPS</div>
-            {['gst.gov.in पर login करें',
-              'Services → Returns → File Returns',
-              `${form.period} period select करें`,
-              'JSON Upload करें (auto-downloaded file use करें)',
-              'Preview करें → Validate → Submit',
-              'EVC/DSC से sign करें → ARN मिलेगा'
-            ].map((s,i)=>(
-              <div key={i} style={{fontSize:13,color:C.textDim,padding:'6px 0',borderBottom:`1px solid ${C.border}33`,display:'flex',gap:10}}>
-                <span className="mono" style={{color:C.green,fontSize:11}}>{i+1}.</span>{s}
-              </div>
-            ))}
-          </div>
-          <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap',marginTop:16}}>
-            <Btn onClick={reset}>Next Client</Btn>
-            <Btn variant="download" onClick={downloadGSTJSON}>⬇ JSON फिर Download करें</Btn>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+function buildAutomation(){
+  const rl=$('rulesList');if(!rl)return;
+  RULES.forEach((r,i)=>{
+    rl.innerHTML+=`<div class="rule-card">
+      <div class="rule-icon" style="background:${r.c}">${r.ic}</div>
+      <div class="rule-info"><div class="rule-name">${r.name}</div><div class="rule-desc">${r.desc}</div></div>
+      <div class="rule-toggle ${r.on?'on':'off'}" onclick="this.classList.toggle('on');this.classList.toggle('off');showToast(this.classList.contains('on')?'Rule activated ✓':'Rule paused','ok')" title="${r.on?'Active':'Inactive'}"></div>
+    </div>`;
+  });
 }
 
-/* ────────────────────────────────────────────────
-   MODULE 3: CLIENT MANAGER (NEW — fixes multi-user/no client list issue)
-──────────────────────────────────────────────────*/
-function ClientModule({toast,clients,setClients}){
-  const [form,setForm]=useState({name:'',gstin:'',pan:'',email:'',phone:'',state:'',type:'Proprietorship'});
-  const [editId,setEditId]=useState(null);
-  const [search,setSearch]=useState('');
-  const [errs,setErrs]=useState({});
-  const setF=(k,v)=>setForm(p=>({...p,[k]:v}));
-
-  const TYPES=['Proprietorship','Partnership','LLP','Private Limited','Public Limited','HUF','Trust','Society'];
-  const STATES=['Andhra Pradesh','Assam','Bihar','Chhattisgarh','Delhi','Gujarat','Haryana',
-    'Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Odisha',
-    'Punjab','Rajasthan','Tamil Nadu','Telangana','Uttar Pradesh','Uttarakhand','West Bengal'];
-
-  const validate=()=>{
-    const e={};
-    if(!form.name.trim())e.name='Name required';
-    if(form.gstin&&!validateGSTIN(form.gstin))e.gstin='Invalid GSTIN';
-    if(form.pan&&!validatePAN(form.pan))e.pan='Invalid PAN';
-    if(form.email&&!validateEmail(form.email))e.email='Invalid email';
-    if(!editId&&clients.find(c=>c.name.toLowerCase()===form.name.toLowerCase()))e.name='Client already exists';
-    setErrs(e);return Object.keys(e).length===0;
-  };
-
-  const save=()=>{
-    if(!validate())return;
-    let updated;
-    if(editId){
-      updated=clients.map(c=>c.id===editId?{...c,...form}:c);
-      toast(`${form.name} updated`,'success');setEditId(null);
-    }else{
-      const nc={...form,id:Date.now(),addedAt:new Date().toISOString()};
-      updated=[...clients,nc];
-      toast(`${form.name} added`,'success');
-    }
-    setClients(updated);STORE.set('clients',updated);
-    setForm({name:'',gstin:'',pan:'',email:'',phone:'',state:'',type:'Proprietorship'});setErrs({});
-  };
-
-  const del=(id)=>{
-    const updated=clients.filter(c=>c.id!==id);
-    setClients(updated);STORE.set('clients',updated);toast('Client deleted','success');
-  };
-
-  const edit=(c)=>{
-    setEditId(c.id);
-    setForm({name:c.name,gstin:c.gstin||'',pan:c.pan||'',email:c.email||'',phone:c.phone||'',state:c.state||'',type:c.type||'Proprietorship'});
-  };
-
-  const exportCSV=()=>{
-    const hdr='Name,GSTIN,PAN,Email,Phone,State,Type,Added\n';
-    const rows=clients.map(c=>[c.name,c.gstin,c.pan,c.email,c.phone,c.state,c.type,c.addedAt?.slice(0,10)].join(',')).join('\n');
-    downloadFile(hdr+rows,`clients_${Date.now()}.csv`,'text/csv');
-    toast('Clients CSV exported','success');
-  };
-
-  const filtered=clients.filter(c=>c.name.toLowerCase().includes(search.toLowerCase())||
-    (c.gstin||'').includes(search.toUpperCase())||
-    (c.pan||'').includes(search.toUpperCase()));
-
-  return(
-    <div className="fade-up">
-      <div className="grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1.4fr',gap:20}}>
-        <div className="card" style={{padding:24}}>
-          <div className="mono" style={{fontSize:10,color:C.accent,marginBottom:20,letterSpacing:1}}>
-            {editId?'EDIT CLIENT':'ADD NEW CLIENT'}
-          </div>
-          <Field label="Client Name" value={form.name} onChange={v=>setF('name',v)} error={errs.name} required/>
-          <Field label="GSTIN" value={form.gstin} onChange={v=>setF('gstin',v.toUpperCase())} mono
-            placeholder="07AABCS1234F1Z5" error={errs.gstin}
-            hint={!errs.gstin&&validateGSTIN(form.gstin)?'✓ Valid GSTIN':''}/>
-          <Field label="PAN" value={form.pan} onChange={v=>setF('pan',v.toUpperCase())} mono
-            placeholder="ABCDE1234F" error={errs.pan}
-            hint={!errs.pan&&validatePAN(form.pan)?'✓ Valid PAN':''}/>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-            <Field label="Email" value={form.email} onChange={v=>setF('email',v)} type="email" error={errs.email}/>
-            <Field label="Phone" value={form.phone} onChange={v=>setF('phone',v)} mono placeholder="9876543210"/>
-          </div>
-          <Field label="State" value={form.state} onChange={v=>setF('state',v)} options={['— State —',...STATES]}/>
-          <Field label="Business Type" value={form.type} onChange={v=>setF('type',v)} options={TYPES}/>
-          <div style={{display:'flex',gap:10,marginTop:4}}>
-            <Btn full onClick={save}>{editId?'Update Client':'+ Client Add करें'}</Btn>
-            {editId&&<Btn variant="ghost" onClick={()=>{setEditId(null);setForm({name:'',gstin:'',pan:'',email:'',phone:'',state:'',type:'Proprietorship'});setErrs({});}}>Cancel</Btn>}
-          </div>
+function buildHashtags(){
+  const th=$('trendingHT');
+  if(th){
+    TRENDING_HT.forEach(h=>{
+      th.innerHTML+=`<div class="ht" style="background:${h.c}15;color:${h.c};border:1px solid ${h.c}30" onclick="showToast('${h.tag} added to composer!','ok')">
+        ${h.tag} ${h.hot?'🔥':''} <span style="font-size:.62rem;opacity:.7">${h.posts}</span>
+      </div>`;
+    });
+  }
+  const hg=$('htGroups');
+  if(hg){
+    HT_GROUPS.forEach(g=>{
+      hg.innerHTML+=`<div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div><div style="font-size:.82rem;font-weight:700;color:var(--text)">${g.name}</div><div style="font-size:.68rem;color:var(--text3)">${g.count} hashtags</div></div>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${g.auto?'<span class="badge b-g">Auto-Add</span>':'<span class="badge b-grey">Manual</span>'}
+          <button class="sm-btn" onclick="showToast('Hashtags copied!','ok')">Copy</button>
         </div>
-
-        <div className="card" style={{padding:24}}>
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,flexWrap:'wrap',gap:10}}>
-            <div className="mono" style={{fontSize:10,color:C.accent,letterSpacing:1}}>CLIENTS ({clients.length})</div>
-            <div style={{display:'flex',gap:8}}>
-              <Btn variant="ghost" sm onClick={exportCSV}>⬇ CSV Export</Btn>
-            </div>
-          </div>
-          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search by name, GSTIN, PAN..."
-            style={{width:'100%',background:C.card2,border:`1px solid ${C.border}`,color:C.text,
-              borderRadius:9,padding:'9px 13px',fontSize:13,marginBottom:14}}/>
-          <div style={{overflowY:'auto',maxHeight:420}}>
-            {filtered.length===0
-              ?<div style={{textAlign:'center',padding:30,color:C.muted}}>
-                <div style={{fontSize:28,marginBottom:8}}>📭</div>
-                <div style={{fontSize:13}}>{search?'No match found':'No clients yet'}</div>
-              </div>
-              :filtered.map(c=>(
-                <div key={c.id} className="table-row" style={{padding:'11px 0',borderBottom:`1px solid ${C.border}44`,
-                  display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:10}}>
-                  <div style={{flex:1,minWidth:0}}>
-                    <div style={{fontSize:13,fontWeight:600,marginBottom:2}}>{c.name}</div>
-                    {c.gstin&&<div className="mono" style={{fontSize:10,color:C.accent}}>{c.gstin}</div>}
-                    <div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:4}}>
-                      {c.pan&&<span className="badge tag-blue">{c.pan}</span>}
-                      <span className="badge tag-purple">{c.type}</span>
-                      {c.state&&<span className="mono" style={{fontSize:9,color:C.muted}}>{c.state}</span>}
-                    </div>
-                  </div>
-                  <div style={{display:'flex',gap:6,flexShrink:0}}>
-                    <button onClick={()=>edit(c)} style={{background:C.card2,border:`1px solid ${C.border}`,
-                      color:C.sub,padding:'4px 10px',borderRadius:7,cursor:'pointer',fontSize:11}}>✏</button>
-                    <button onClick={()=>del(c.id)} style={{background:'none',border:'none',color:C.muted,cursor:'pointer',fontSize:15}}>✕</button>
-                  </div>
-                </div>
-              ))
-            }
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+      </div>`;
+    });
+  }
+  const ht=$('htTable');if(!ht)return;
+  HT_TABLE.forEach(h=>{
+    ht.innerHTML+=`<tr>
+      <td class="mono" style="color:var(--g1)">${h.tag}</td>
+      <td class="mono">${h.pd}</td>
+      <td class="num-g">${h.reach}</td>
+      <td>${h.rank}</td>
+      <td><span class="badge ${h.comp==='Low'?'b-g':h.comp==='Medium'?'b-a':h.comp.includes('High')?'b-r':'b-grey'}">${h.comp}</span></td>
+      <td><span class="badge ${h.rec==='Best'?'b-g':h.rec==='Use'?'b-b':'b-r'}">${h.rec}</span></td>
+    </tr>`;
+  });
 }
 
-/* ────────────────────────────────────────────────
-   MODULE 4: TDS MANAGER (Enhanced)
-──────────────────────────────────────────────────*/
-function TDSModule({toast,clients}){
-  const [entries,setEntries]=useState(()=>STORE.get('tds',[]));
-  const [form,setForm]=useState({deductee:'',pan:'',section:'194C',amount:'',rate:'',tdsAmt:'',quarter:'Q4 FY 2024-25',nature:'Contract'});
-  const [errs,setErrs]=useState({});
-  const setF=(k,v)=>setForm(p=>({...p,[k]:v}));
-
-  const SECS=[
-    {v:'194A',l:'194A — Interest (Bank/NBFCs)',r:10},
-    {v:'194C',l:'194C — Contractor/Sub-contractor',r:1},
-    {v:'194D',l:'194D — Insurance Commission',r:5},
-    {v:'194G',l:'194G — Lottery Commission',r:5},
-    {v:'194H',l:'194H — Commission/Brokerage',r:5},
-    {v:'194I',l:'194I — Rent (P&M, Land, Building)',r:10},
-    {v:'194J',l:'194J — Professional/Technical Fee',r:10},
-    {v:'194LA',l:'194LA — Land Compensation',r:10},
-    {v:'194Q',l:'194Q — Purchase of Goods',r:0.1},
-    {v:'192',l:'192 — Salary (Sec 192)',r:30},
-  ];
-
-  useEffect(()=>{
-    const sec=SECS.find(s=>s.v===form.section);
-    const rate=sec?.r||0;
-    const amt=((parseFloat(form.amount)||0)*rate/100).toFixed(2);
-    setForm(p=>({...p,rate:rate+'',tdsAmt:amt}));
-  },[form.section,form.amount]);
-
-  const validate=()=>{
-    const e={};
-    if(!form.deductee.trim())e.deductee='Required';
-    if(!validatePAN(form.pan))e.pan='Invalid PAN (ABCDE1234F)';
-    if(!form.amount||isNaN(parseFloat(form.amount))||parseFloat(form.amount)<=0)e.amount='Valid amount required';
-    setErrs(e);return Object.keys(e).length===0;
-  };
-
-  const add=()=>{
-    if(!validate())return;
-    const entry={...form,id:Date.now(),addedAt:new Date().toISOString()};
-    const updated=[...entries,entry];
-    setEntries(updated);STORE.set('tds',updated);
-    setForm(p=>({...p,deductee:'',pan:'',amount:'',tdsAmt:''}));
-    setErrs({});toast('TDS entry added','success');
-  };
-
-  const del=(id)=>{const u=entries.filter(e=>e.id!==id);setEntries(u);STORE.set('tds',u);toast('Deleted','success');};
-
-  const exportCSV=()=>{
-    const hdr='Deductee,PAN,Section,Nature,Amount,Rate%,TDS Amount,Quarter,Date\n';
-    const rows=entries.map(e=>[e.deductee,e.pan,e.section,e.nature,e.amount,e.rate,e.tdsAmt,e.quarter,e.addedAt?.slice(0,10)].join(',')).join('\n');
-    downloadFile(hdr+rows,`tds_entries_${Date.now()}.csv`,'text/csv');
-    toast('TDS CSV exported','success');
-  };
-
-  const totalTDS=entries.reduce((s,e)=>s+parseFloat(e.tdsAmt||0),0);
-  const quarterTotal=entries.filter(e=>e.quarter===form.quarter).reduce((s,e)=>s+parseFloat(e.tdsAmt||0),0);
-
-  return(
-    <div className="fade-up">
-      <div className="grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
-        <div className="card" style={{padding:24}}>
-          <div className="mono" style={{fontSize:10,color:C.accent,marginBottom:20,letterSpacing:1}}>NEW TDS ENTRY</div>
-          <Field label="Deductee Name" value={form.deductee} onChange={v=>setF('deductee',v)} error={errs.deductee} required/>
-          <Field label="PAN Number" value={form.pan} onChange={v=>setF('pan',v.toUpperCase())} mono
-            placeholder="ABCDE1234F" error={errs.pan}
-            hint={!errs.pan&&validatePAN(form.pan)?'✓ Valid PAN':''}/>
-          <Field label="TDS Section" value={form.section} onChange={v=>setF('section',v)} options={SECS}/>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-            <Field label="Payment Amount ₹" value={form.amount} onChange={v=>setF('amount',v)} type="number" error={errs.amount}/>
-            <Field label="Rate %" value={form.rate} onChange={v=>setF('rate',v)} mono/>
-          </div>
-          <div style={{background:C.card2,borderRadius:10,padding:'14px 16px',marginBottom:14}}>
-            <div className="mono" style={{fontSize:10,color:C.muted,marginBottom:4}}>TDS (AUTO-CALCULATED)</div>
-            <div className="mono" style={{fontSize:24,color:C.green,fontWeight:500}}>₹{parseFloat(form.tdsAmt||0).toLocaleString('en-IN',{minimumFractionDigits:2})}</div>
-          </div>
-          <Field label="Quarter" value={form.quarter} onChange={v=>setF('quarter',v)}
-            options={['Q1 FY 2025-26','Q4 FY 2024-25','Q3 FY 2024-25','Q2 FY 2024-25','Q1 FY 2024-25']}/>
-          <Field label="Nature of Payment" value={form.nature} onChange={v=>setF('nature',v)}
-            options={['Contract','Professional Fee','Salary','Commission','Rent','Interest','Other']}/>
-          <div style={{display:'flex',gap:10}}>
-            <Btn full onClick={add}>+ Entry Add करें</Btn>
-            {entries.length>0&&<Btn variant="download" onClick={exportCSV}>⬇ CSV</Btn>}
-          </div>
-        </div>
-
-        <div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:16}}>
-            {[['Total TDS',totalTDS,C.green,entries.length+' entries'],
-              ['This Quarter',quarterTotal,C.accent,form.quarter],
-            ].map(([l,v,c,s],i)=>(
-              <div key={i} className="card" style={{padding:18,border:`1px solid ${c}22`}}>
-                <div className="mono" style={{fontSize:22,color:c,fontWeight:500}}>₹{v.toLocaleString('en-IN',{maximumFractionDigits:0})}</div>
-                <div style={{fontSize:12,color:C.sub,marginTop:4}}>{l}</div>
-                <div className="mono" style={{fontSize:10,color:C.muted,marginTop:2}}>{s}</div>
-              </div>
-            ))}
-          </div>
-          <div className="card" style={{padding:20}}>
-            <div className="mono" style={{fontSize:10,color:C.accent,marginBottom:14,letterSpacing:1}}>TDS RATE REFERENCE</div>
-            <div style={{overflowY:'auto',maxHeight:280}}>
-              {SECS.map((s,i)=>(
-                <div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',
-                  padding:'8px 0',borderBottom:`1px solid ${C.border}33`}}>
-                  <div>
-                    <div style={{fontSize:12,fontWeight:500}}>{s.v}</div>
-                    <div style={{fontSize:11,color:C.muted}}>{s.l.split('—')[1]?.trim()}</div>
-                  </div>
-                  <span className={`badge ${s.v===form.section?'tag-valid':'tag-blue'}`}>{s.r}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="card" style={{padding:20}}>
-        <div className="mono" style={{fontSize:10,color:C.accent,marginBottom:14,letterSpacing:1}}>ENTRIES ({entries.length})</div>
-        {entries.length===0
-          ?<div style={{textAlign:'center',padding:30,color:C.muted}}><div style={{fontSize:28,marginBottom:8}}>📭</div><div style={{fontSize:13}}>No entries yet</div></div>
-          :<div style={{overflowX:'auto'}}>
-            <table style={{width:'100%',borderCollapse:'collapse',minWidth:580}}>
-              <thead><tr style={{borderBottom:`1px solid ${C.border}`}}>
-                {['Deductee','PAN','Section','Amount','TDS Amt','Quarter',''].map((h,i)=>(
-                  <th key={i} className="mono" style={{padding:'8px 12px',textAlign:i>2?'right':'left',fontSize:10,color:C.muted,fontWeight:400}}>{h}</th>
-                ))}
-              </tr></thead>
-              <tbody>
-                {entries.slice().reverse().map(e=>(
-                  <tr key={e.id} className="table-row" style={{borderBottom:`1px solid ${C.border}33`}}>
-                    <td style={{padding:'10px 12px',fontSize:13}}>{e.deductee}</td>
-                    <td className="mono" style={{padding:'10px 12px',fontSize:12,color:C.sub}}>{e.pan}</td>
-                    <td style={{padding:'10px 12px'}}><span className="badge tag-blue">{e.section}</span></td>
-                    <td className="mono" style={{padding:'10px 12px',fontSize:13,textAlign:'right'}}>₹{parseFloat(e.amount).toLocaleString('en-IN')}</td>
-                    <td className="mono" style={{padding:'10px 12px',fontSize:13,color:C.green,textAlign:'right'}}>₹{parseFloat(e.tdsAmt).toLocaleString('en-IN')}</td>
-                    <td className="mono" style={{padding:'10px 12px',fontSize:11,color:C.muted,textAlign:'right'}}>{e.quarter}</td>
-                    <td style={{padding:'10px 12px',textAlign:'right'}}>
-                      <button onClick={()=>del(e.id)} style={{background:'none',border:'none',color:C.muted,cursor:'pointer',fontSize:15}}>✕</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>}
-      </div>
-    </div>
-  );
+function buildReports(){
+  const rt=$('reportTable');
+  if(rt){
+    REPORT_DATA.forEach(r=>{
+      rt.innerHTML+=`<tr><td>${r.m}</td><td class="mono">${r.th}</td><td class="mono">${r.lm}</td><td class="${r.up?'num-g':'num-r'}">${r.c}</td></tr>`;
+    });
+  }
+  const ar=$('autoReports');
+  if(ar){
+    [['Weekly Summary','Every Monday 9 AM','Email'],['Monthly Deep Dive','1st of every month','Email + PDF'],['Platform-wise Breakdown','Every Sunday','WhatsApp'],['Competitor Analysis','Monthly','Email']].forEach(([n,t,m])=>{
+      ar.innerHTML+=`<div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
+        <div style="flex:1"><div style="font-size:.82rem;font-weight:700;color:var(--text)">${n}</div><div style="font-size:.68rem;color:var(--text3)">${t} · ${m}</div></div>
+        <div style="width:26px;height:14px;border-radius:7px;background:linear-gradient(135deg,var(--g1),var(--g5));cursor:pointer"></div>
+      </div>`;
+    });
+  }
 }
 
-/* ────────────────────────────────────────────────
-   MODULE 5: SYNC & BACKUP (NEW — fixes data loss issue)
-──────────────────────────────────────────────────*/
-function SyncModule({toast,user}){
-  const [tab,setTab]=useState('backup');
-
-  const exportAll=()=>{
-    const data=STORE.exportAll();
-    downloadFile(JSON.stringify(data,null,2),`ca_backup_${user}_${Date.now()}.json`,'application/json');
-    toast('Full backup exported — keep file safe!','success');
-  };
-
-  const importAll=(e)=>{
-    const file=e.target.files?.[0];if(!file)return;
-    const reader=new FileReader();
-    reader.onload=ev=>{
-      try{
-        const data=JSON.parse(ev.target.result);
-        STORE.importAll(data);
-        toast('Data restored! Page refresh करें।','success');
-        setTimeout(()=>window.location.reload(),2000);
-      }catch{toast('Invalid backup file','error');}
-    };
-    reader.readAsText(file);
-  };
-
-  const clearUser=()=>{
-    STORE.allKeys().forEach(k=>localStorage.removeItem(k));
-    toast('Data cleared! Reload होगा।','success');
-    setTimeout(()=>window.location.reload(),1500);
-  };
-
-  return(
-    <div className="fade-up">
-      <InfoBanner type="info">Data browser के localStorage में save है। Regular backup लेते रहें। दूसरे device पर use करने के लिए export/import करें।</InfoBanner>
-
-      <div style={{display:'flex',gap:10,marginBottom:20}}>
-        {['backup','import','clear'].map(t=>(
-          <button key={t} onClick={()=>setTab(t)}
-            style={{padding:'8px 18px',borderRadius:9,cursor:'pointer',fontSize:13,fontWeight:500,
-              background:tab===t?C.accent:C.card2,color:tab===t?'#07090f':C.sub,
-              border:`1px solid ${tab===t?C.accent:C.border}`,fontFamily:'Space Grotesk,sans-serif'}}>
-            {t==='backup'?'📦 Backup Export':t==='import'?'📥 Data Import':'🗑 Clear Data'}
-          </button>
-        ))}
-      </div>
-
-      {tab==='backup'&&(
-        <div className="card" style={{padding:28,maxWidth:500}}>
-          <div style={{fontSize:16,fontWeight:600,marginBottom:8}}>Data Backup Export</div>
-          <div style={{fontSize:13,color:C.sub,marginBottom:20,lineHeight:1.65}}>
-            सभी clients, entries, filings, TDS records — सब JSON file में export होंगे। इस file को safe रखें।
-          </div>
-          <div style={{background:C.card2,borderRadius:10,padding:14,marginBottom:20}}>
-            {[['User',user],['Total Keys',STORE.allKeys().length],['Storage Used',(JSON.stringify(STORE.exportAll()).length/1024).toFixed(1)+' KB']].map(([l,v],i)=>(
-              <div key={i} style={{display:'flex',justifyContent:'space-between',padding:'6px 0',borderBottom:`1px solid ${C.border}44`,fontSize:13}}>
-                <span style={{color:C.sub}}>{l}</span>
-                <span className="mono" style={{color:C.accent}}>{v}</span>
-              </div>
-            ))}
-          </div>
-          <Btn variant="download" full onClick={exportAll}>📦 Full Backup Download करें</Btn>
-        </div>
-      )}
-
-      {tab==='import'&&(
-        <div className="card" style={{padding:28,maxWidth:500}}>
-          <div style={{fontSize:16,fontWeight:600,marginBottom:8}}>Data Restore</div>
-          <div style={{fontSize:13,color:C.sub,marginBottom:20,lineHeight:1.65}}>
-            Previously exported JSON backup file select करें। Existing data replace हो जाएगा।
-          </div>
-          <InfoBanner type="warning">Import से पहले current data का backup जरूर लें।</InfoBanner>
-          <label style={{display:'block',border:`2px dashed ${C.border}`,borderRadius:12,padding:28,
-            textAlign:'center',cursor:'pointer',transition:'all .2s'}}
-            onMouseEnter={e=>e.currentTarget.style.borderColor=C.accent}
-            onMouseLeave={e=>e.currentTarget.style.borderColor=C.border}>
-            <input type="file" accept=".json" style={{display:'none'}} onChange={importAll}/>
-            <div style={{fontSize:36,marginBottom:10}}>📥</div>
-            <div style={{fontSize:14,fontWeight:500,marginBottom:4}}>JSON Backup File Select करें</div>
-            <div style={{fontSize:12,color:C.sub}}>ca_backup_*.json file</div>
-          </label>
-        </div>
-      )}
-
-      {tab==='clear'&&(
-        <div className="card" style={{padding:28,maxWidth:500}}>
-          <div style={{fontSize:16,fontWeight:600,marginBottom:8,color:C.red}}>Data Clear करें</div>
-          <InfoBanner type="warning">यह action irreversible है! Clear करने से पहले backup जरूर लें।</InfoBanner>
-          <div style={{fontSize:13,color:C.sub,marginBottom:20,lineHeight:1.65}}>
-            User <strong style={{color:C.text}}>{user}</strong> का सारा data delete होगा — entries, clients, filings, TDS — सब।
-          </div>
-          <div style={{display:'flex',gap:10}}>
-            <Btn variant="download" onClick={exportAll}>📦 पहले Backup लें</Btn>
-            <Btn variant="red" onClick={clearUser}>🗑 Data Clear करें</Btn>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+/* ══════════════════════════════════
+   INTERACTIONS
+══════════════════════════════════ */
+function updateCharCount(){
+  const len=$('composeInput')?.value.length||0;
+  const cc=$('charCount');
+  if(cc){cc.textContent=`${len} / 280`;cc.style.color=len>260?'var(--rose)':len>200?'var(--amber)':'var(--text3)';}
+  // Update previews
+  const txt=$('composeInput')?.value||'';
+  PLATFORMS.forEach(p=>{
+    const prev=document.getElementById(`preview-${p.id}`);
+    if(prev&&txt) prev.textContent=txt;
+  });
 }
 
-/* ────────────────────────────────────────────────
-   MODULE 6: AI ASSISTANT (Enhanced with context)
-──────────────────────────────────────────────────*/
-function AIModule({isOnline,clients}){
-  const [msgs,setMsgs]=useState([{role:'assistant',text:'नमस्ते! मैं आपका CA AI Assistant हूँ। 🙏\n\nGST, TDS, Tally, Income Tax, Companies Act — कुछ भी पूछें। Hindi और English दोनों में answer देता हूँ।\n\n⚠️ GSTIN, PAN, Aadhaar यहाँ share न करें।'}]);
-  const [input,setInput]=useState('');
-  const [loading,setLoading]=useState(false);
-  const bottomRef=useRef();
-
-  const QUICK=['GSTR-3B due date?','194C TDS rate क्या है?','ITC reversal कब होता है?','Section 44AD explain करो','Late fee calculation','GSTR-1 vs GSTR-3B difference?'];
-
-  const send=async()=>{
-    if(!input.trim()||loading||!isOnline)return;
-    const q=redact(input.trim());setInput('');
-    const newMsgs=[...msgs,{role:'user',text:q}];
-    setMsgs(newMsgs);setLoading(true);
-    try{
-      const clientCtx=clients.length?`Client list context (anonymized): ${clients.length} clients registered.`:'';
-      const resp=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
-          system:`You are an expert Indian Chartered Accountant. Help with GST, TDS, Tally, Income Tax, Companies Act, audit. Answer in same language as user (Hindi/English/Hinglish). Be practical and cite section numbers. ${clientCtx} Never ask for or repeat sensitive identifiers.`,
-          messages:newMsgs.filter(m=>m.role!=='system').slice(-14).map(m=>({role:m.role,content:m.text}))})
-      });
-      const d=await resp.json();
-      const reply=d.content?.[0]?.text||'Error';
-      setMsgs(p=>[...p,{role:'assistant',text:reply}]);
-    }catch{setMsgs(p=>[...p,{role:'assistant',text:'Network error। Internet check करें।'}]);}
-    setLoading(false);
-    setTimeout(()=>bottomRef.current?.scrollIntoView({behavior:'smooth'}),100);
-  };
-
-  return(
-    <div style={{display:'flex',flexDirection:'column',height:'calc(100vh - 180px)'}}>
-      <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:12}}>
-        {QUICK.map(q=>(
-          <button key={q} onClick={()=>setInput(q)}
-            style={{background:C.card,border:`1px solid ${C.border}`,color:C.sub,
-              padding:'5px 13px',borderRadius:20,fontSize:11,cursor:'pointer',fontFamily:'Space Grotesk,sans-serif',
-              transition:'all .2s'}}
-            onMouseEnter={e=>{e.target.style.borderColor=C.accent;e.target.style.color=C.accent;}}
-            onMouseLeave={e=>{e.target.style.borderColor=C.border;e.target.style.color=C.sub;}}>
-            {q}
-          </button>
-        ))}
-        <button onClick={()=>setMsgs(p=>[p[0]])}
-          style={{marginLeft:'auto',background:'none',border:`1px solid ${C.border}`,color:C.muted,
-            padding:'5px 13px',borderRadius:20,fontSize:11,cursor:'pointer',fontFamily:'Space Grotesk,sans-serif'}}>
-          🗑 Clear
-        </button>
-      </div>
-      <InfoBanner type="security">GSTIN, PAN, Aadhaar जैसी sensitive info यहाँ share न करें। Auto-redact होता है।</InfoBanner>
-      <div style={{flex:1,background:C.card,border:`1px solid ${C.border}`,borderRadius:14,
-        padding:20,overflowY:'auto',display:'flex',flexDirection:'column',gap:14,marginBottom:14}}>
-        {msgs.map((m,i)=>(
-          <div key={i} className="fade-up" style={{
-            alignSelf:m.role==='user'?'flex-end':'flex-start',maxWidth:'84%',
-            background:m.role==='user'?`${C.accent}14`:C.surf,
-            border:`1px solid ${m.role==='user'?C.accent+'33':C.border}`,
-            borderRadius:m.role==='user'?'14px 14px 2px 14px':'14px 14px 14px 2px',
-            padding:'13px 17px'}}>
-            {m.role==='assistant'&&<div className="mono" style={{fontSize:9,color:C.accent,marginBottom:6}}>✦ CA ASSISTANT</div>}
-            <div style={{fontSize:14,lineHeight:1.82,whiteSpace:'pre-wrap',color:C.text}}>{m.text}</div>
-          </div>
-        ))}
-        {loading&&(
-          <div style={{alignSelf:'flex-start',background:C.surf,border:`1px solid ${C.border}`,
-            borderRadius:'14px 14px 14px 2px',padding:'13px 17px'}}>
-            <span className="pulse-anim mono" style={{fontSize:12,color:C.muted}}>सोच रहा हूँ...</span>
-          </div>
-        )}
-        <div ref={bottomRef}/>
-      </div>
-      <div style={{display:'flex',gap:12}}>
-        <input value={input} onChange={e=>setInput(e.target.value)}
-          onKeyDown={e=>e.key==='Enter'&&!e.shiftKey&&send()}
-          disabled={!isOnline}
-          placeholder={isOnline?'GST, TDS, Tally — पूछें (Enter)...':'Internet नहीं है...'}
-          style={{flex:1,background:C.card,border:`1px solid ${C.border}`,color:C.text,
-            borderRadius:10,padding:'13px 17px',fontSize:14}}/>
-        <Btn onClick={send} disabled={loading||!isOnline}>{loading?'...':'Send →'}</Btn>
-      </div>
-    </div>
-  );
+function aiWritePost(){
+  const input=$('composeInput');if(!input)return;
+  input.value='🔄 AI generating…';
+  showToast('🤖 AI is crafting your post…','ai');
+  setTimeout(()=>{
+    const posts=[
+      '🚀 Just shipped something that\'s going to change how you manage social media.\n\nAfter 6 months of building, our AI can now:\n✅ Write your captions\n✅ Schedule across all platforms\n✅ Auto-optimize for each audience\n\nThe future of social media is automated. Are you ready?\n\n#AI #SocialMedia #Startup #Innovation',
+      '💡 The secret to growing 100K followers in 6 months?\n\nIt\'s not about posting every day.\nIt\'s not about going viral.\nIt\'s about CONSISTENCY + QUALITY.\n\nHere\'s my exact strategy 🧵\n\n#ContentCreator #GrowthHacking #BuildInPublic',
+      '📈 Our engagement rate jumped from 2.1% to 8.4% in 30 days.\n\nWhat changed? We let AI write 70% of our captions.\n\nControversial? Maybe.\nEffective? 100%.\n\n#AIMarketing #ContentStrategy #DigitalMarketing',
+    ];
+    input.value=posts[Math.floor(Math.random()*posts.length)];
+    updateCharCount();
+    showToast('✨ AI post generated!','ok');
+  },1500);
 }
 
-/* ────────────────────────────────────────────────
-   MODULE 7: REPORTS (Enhanced)
-──────────────────────────────────────────────────*/
-function ReportsModule(){
-  const tallyH=STORE.get('tally',[]);
-  const filedR=STORE.get('gst_filed',[]);
-  const tdsE=STORE.get('tds',[]);
-  const clientsL=STORE.get('clients',[]);
-  const totalTax=filedR.reduce((s,r)=>s+(r.tax||0),0);
-  const totalTDS=tdsE.reduce((s,e)=>s+parseFloat(e.tdsAmt||0),0);
-
-  const exportReport=()=>{
-    const lines=[
-      `CA Office Pro v3 — Full Report`,
-      `Generated: ${new Date().toLocaleString('en-IN')}`,
-      ``,
-      `SUMMARY`,
-      `Clients: ${clientsL.length}`,
-      `Tally Vouchers: ${tallyH.length}`,
-      `GST Returns Filed: ${filedR.length}`,
-      `TDS Entries: ${tdsE.length}`,
-      `Total GST Tax Prepared: ₹${totalTax.toLocaleString('en-IN')}`,
-      `Total TDS Deducted: ₹${totalTDS.toLocaleString('en-IN')}`,
-      ``,
-      `GST FILINGS`,
-      ...filedR.map(r=>`${r.filedAt?.slice(0,10)} | ${r.client} | ${r.type} | ${r.period} | ARN: ${r.arn} | Tax: ₹${r.tax||0}`),
-      ``,
-      `TDS ENTRIES`,
-      ...tdsE.map(e=>`${e.addedAt?.slice(0,10)} | ${e.deductee} | ${e.pan} | ${e.section} | Amount: ₹${e.amount} | TDS: ₹${e.tdsAmt} | ${e.quarter}`),
-    ].join('\n');
-    downloadFile(lines,`ca_report_${Date.now()}.txt`,'text/plain');
-  };
-
-  return(
-    <div className="fade-up">
-      <div style={{display:'flex',justifyContent:'flex-end',marginBottom:16}}>
-        <Btn variant="download" onClick={exportReport}>⬇ Full Report Export</Btn>
-      </div>
-      <div className="grid-4" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14,marginBottom:22}}>
-        {[['Clients',clientsL.length,C.purple],['Tally Entries',tallyH.length,C.accent],
-          ['GST Returns',filedR.length,C.green],['TDS Entries',tdsE.length,C.yellow]].map(([l,v,c],i)=>(
-          <div key={i} className="card" style={{padding:20,border:`1px solid ${c}22`}}>
-            <div className="mono" style={{fontSize:26,color:c,fontWeight:300}}>{v}</div>
-            <div style={{fontSize:12,color:C.sub,marginTop:5}}>{l}</div>
-          </div>
-        ))}
-      </div>
-      <div className="grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-        <div className="card" style={{padding:20}}>
-          <div className="mono" style={{fontSize:10,color:C.accent,marginBottom:14,letterSpacing:1}}>RECENT GST FILINGS</div>
-          {filedR.length===0
-            ?<div style={{textAlign:'center',padding:20,color:C.muted,fontSize:13}}>No filings yet</div>
-            :filedR.slice().reverse().slice(0,8).map((r,i)=>(
-              <div key={i} style={{display:'flex',justifyContent:'space-between',padding:'9px 0',borderBottom:`1px solid ${C.border}33`}}>
-                <div>
-                  <div style={{fontSize:13,fontWeight:600}}>{r.client}</div>
-                  <div className="mono" style={{fontSize:10,color:C.muted}}>{r.type} · {r.period}</div>
-                </div>
-                <div style={{textAlign:'right'}}>
-                  <div className="mono" style={{fontSize:11,color:C.green}}>{r.arn}</div>
-                  <div className="mono" style={{fontSize:9,color:C.muted}}>{r.filedAt?.slice(0,10)}</div>
-                </div>
-              </div>
-            ))}
-        </div>
-        <div className="card" style={{padding:20}}>
-          <div className="mono" style={{fontSize:10,color:C.accent,marginBottom:14,letterSpacing:1}}>TDS BY SECTION</div>
-          {tdsE.length===0
-            ?<div style={{textAlign:'center',padding:20,color:C.muted,fontSize:13}}>No TDS entries yet</div>
-            :Object.entries(tdsE.reduce((a,e)=>{a[e.section]=(a[e.section]||0)+parseFloat(e.tdsAmt||0);return a;},{}))
-              .sort((a,b)=>b[1]-a[1])
-              .map(([sec,amt],i)=>(
-                <div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'9px 0',borderBottom:`1px solid ${C.border}33`}}>
-                  <span className="badge tag-blue">{sec}</span>
-                  <span className="mono" style={{fontSize:13,color:C.yellow}}>₹{amt.toLocaleString('en-IN',{maximumFractionDigits:0})}</span>
-                </div>
-              ))
-          }
-          {tdsE.length>0&&(
-            <div style={{marginTop:12,paddingTop:12,borderTop:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between'}}>
-              <span style={{fontSize:13,fontWeight:600}}>Total TDS</span>
-              <span className="mono" style={{fontSize:14,color:C.green,fontWeight:600}}>₹{totalTDS.toLocaleString('en-IN',{maximumFractionDigits:0})}</span>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+function publishNow(){
+  const txt=$('composeInput')?.value.trim();
+  if(!txt){showToast('Please write something first!','err');return;}
+  showToast('🚀 Publishing to all platforms…','ai');
+  setTimeout(()=>showToast('✅ Posted to 5 platforms!','ok'),1200);
+  if($('composeInput'))$('composeInput').value='';
+  updateCharCount();
 }
 
-/* ────────────────────────────────────────────────
-   DASHBOARD
-──────────────────────────────────────────────────*/
-function Dashboard({setActive,clients}){
-  const tallyH=STORE.get('tally',[]);
-  const filedR=STORE.get('gst_filed',[]);
-  const tdsE=STORE.get('tds',[]);
-
-  const FEATURES=[
-    {id:'tally',ico:'📄',t:'Tally AI Entry',d:'Bill photo → Real Tally XML export। AI OCR + TALLYMESSAGE format।',c:C.accent,tag:'AI + XML'},
-    {id:'gst',ico:'🚀',t:'GST Filing',d:'AI analyze → Real GSTN JSON generate → Portal upload guide।',c:C.green,tag:'REAL JSON'},
-    {id:'tds',ico:'💰',t:'TDS Manager',d:'Section-wise entry, PAN validation, TDS auto-calculate, CSV export।',c:C.yellow,tag:'ENHANCED'},
-    {id:'clients',ico:'👥',t:'Client Manager',d:'Client database — GSTIN, PAN, Email सब एक जगह। CSV export।',c:C.purple,tag:'NEW'},
-    {id:'reports',ico:'📊',t:'Reports',d:'All data एक जगह। Full report TXT export।',c:C.orange,tag:''},
-    {id:'sync',ico:'☁',t:'Backup & Sync',d:'Full data backup/restore। दूसरे device पर transfer करें।',c:C.accent,tag:'NEW'},
-    {id:'ai',ico:'✦',t:'CA Assistant',d:'GST, TDS, IT — Hindi/English expert AI।',c:C.green,tag:'AI'},
-  ];
-
-  const recent=[
-    ...tallyH.slice(-3).reverse().map(e=>({l:e.party_name||'Entry',s:`₹${Number(e.total||0).toLocaleString('en-IN')} · ${e.voucher_type}`,c:C.accent,t:'TALLY'})),
-    ...filedR.slice(-3).reverse().map(r=>({l:`${r.type}—${r.client}`,s:`ARN: ${r.arn}`,c:C.green,t:'GST'})),
-    ...tdsE.slice(-3).reverse().map(e=>({l:e.deductee,s:`${e.section}·₹${parseFloat(e.tdsAmt||0).toFixed(0)}`,c:C.yellow,t:'TDS'})),
-  ].slice(0,8);
-
-  return(
-    <div className="fade-up">
-      <div className="grid-4" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14,marginBottom:22}}>
-        {[['Clients',clients.length,'registered',C.purple],
-          ['Tally Vouchers',tallyH.length,'saved',C.accent],
-          ['GST Prepared',filedR.length,'returns',C.green],
-          ['TDS Entries',tdsE.length,'deductions',C.yellow]].map(([l,v,s,c],i)=>(
-          <div key={i} className="card" style={{padding:20,border:`1px solid ${c}22`}}>
-            <div className="mono" style={{fontSize:28,color:c,fontWeight:300}}>{v}</div>
-            <div style={{fontSize:13,color:C.sub,marginTop:5}}>{l}</div>
-            <div className="mono" style={{fontSize:10,color:C.muted,marginTop:3}}>{s}</div>
-          </div>
-        ))}
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(210px,1fr))',gap:14,marginBottom:20}}>
-        {FEATURES.map(f=>(
-          <div key={f.id} className="card card-hover" onClick={()=>setActive(f.id)}
-            style={{padding:20,border:`1px solid ${f.c}22`,position:'relative'}}>
-            {f.tag&&<span style={{position:'absolute',top:12,right:12,fontSize:9,background:f.c,
-              color:'#07090f',padding:'2px 7px',borderRadius:10,fontFamily:'JetBrains Mono,monospace',fontWeight:700}}>{f.tag}</span>}
-            <div style={{fontSize:28,marginBottom:10}}>{f.ico}</div>
-            <div style={{fontSize:14,fontWeight:600,color:f.c,marginBottom:5}}>{f.t}</div>
-            <div style={{fontSize:12,color:C.sub,lineHeight:1.6}}>{f.d}</div>
-            <div className="mono" style={{marginTop:12,fontSize:10,color:f.c}}>Open →</div>
-          </div>
-        ))}
-      </div>
-      <div className="card" style={{padding:20}}>
-        <div className="mono" style={{fontSize:10,color:C.accent,marginBottom:14,letterSpacing:1}}>RECENT ACTIVITY</div>
-        {recent.length===0
-          ?<div style={{textAlign:'center',padding:24,color:C.muted}}>
-            <div style={{fontSize:28,marginBottom:8}}>🏁</div>
-            <div style={{fontSize:13}}>कोई activity नहीं — modules use करना शुरू करें</div>
-          </div>
-          :recent.map((a,i)=>(
-            <div key={i} style={{display:'flex',alignItems:'center',gap:12,padding:'9px 0',borderBottom:`1px solid ${C.border}33`}}>
-              <div style={{width:7,height:7,borderRadius:'50%',background:a.c,flexShrink:0}}/>
-              <div style={{flex:1}}>
-                <div style={{fontSize:13,fontWeight:500}}>{a.l}</div>
-                <div className="mono" style={{fontSize:10,color:C.muted}}>{a.s}</div>
-              </div>
-              <span className="badge tag-blue">{a.t}</span>
-            </div>
-          ))
-        }
-      </div>
-    </div>
-  );
+function generateAIContent(){
+  const topic=$('aiTopic')?.value||'AI automation for business';
+  showToast(`🤖 AI generating content about "${topic}"…`,'ai');
+  setTimeout(()=>{
+    const ar=$('aiResults');if(!ar)return;
+    const content=`🤖 Here's your AI-generated post about "${topic}":\n\n"The businesses winning in 2025 aren't the ones working harder — they're the ones working SMARTER with AI.\n\nHere are 5 ways ${topic} is transforming businesses:\n\n1️⃣ Saves 20+ hours/week of manual work\n2️⃣ Eliminates human error completely\n3️⃣ Scales without adding headcount\n4️⃣ Works 24/7 without breaks\n5️⃣ Gets smarter over time\n\nAre you still doing things manually? 👇\n\n#AI #BusinessAutomation #Productivity #FutureOfWork"`;
+    ar.innerHTML=`<div class="ai-card"><div class="ai-card-top"><div class="ai-ic">✨</div><div><div class="ai-card-t">AI Generated Post</div><div class="ai-card-d">Optimized for engagement · 94% quality score</div></div></div>
+    <div class="ai-result show">${esc(content.replace('🤖 Here\'s your AI-generated post about "'+topic+'":\n\n"','').replace('"',''))}</div>
+    <div class="ai-result-actions"><button class="ar-btn use" onclick="copyToComposer(this)">Use in Composer</button><button class="ar-btn" onclick="showToast('Regenerating…','ai')">Regenerate</button><button class="ar-btn" onclick="showToast('Copied!','ok')">Copy</button></div></div>`;
+    showToast('✨ AI content ready!','ok');
+  },1800);
 }
 
-/* ────────────────────────────────────────────────
-   LOGIN SCREEN (NEW — Multi-user)
-──────────────────────────────────────────────────*/
-function Login({onLogin}){
-  const [name,setName]=useState('');
-  const [pass,setPass]=useState('');
-  const [err,setErr]=useState('');
-  const [mode,setMode]=useState('login');
-
-  // Simple local auth (not server-side — for multi-user data separation)
-  const handle=()=>{
-    if(!name.trim()){setErr('Username required');return;}
-    if(pass.length<4){setErr('Password min 4 characters');return;}
-    const users=JSON.parse(localStorage.getItem('caop_users')||'{}');
-    if(mode==='register'){
-      if(users[name]){setErr('Username already taken');return;}
-      users[name]=btoa(pass);
-      localStorage.setItem('caop_users',JSON.stringify(users));
-      sessionStorage.setItem('caop_user',name);
-      onLogin(name);
-    }else{
-      if(!users[name]||users[name]!==btoa(pass)){setErr('Wrong username or password');return;}
-      sessionStorage.setItem('caop_user',name);
-      onLogin(name);
-    }
-  };
-
-  return(
-    <div className="login-bg" style={{height:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
-      <div style={{maxWidth:400,width:'100%'}} className="fade-up">
-        <div style={{textAlign:'center',marginBottom:36}}>
-          <div style={{width:60,height:60,background:`linear-gradient(135deg,${C.accent},#4299e1)`,
-            borderRadius:18,display:'flex',alignItems:'center',justifyContent:'center',
-            fontSize:26,margin:'0 auto 16px'}}>⬡</div>
-          <div className="serif" style={{fontSize:28,color:C.text,marginBottom:4}}>CA Office Pro</div>
-          <div className="mono" style={{fontSize:11,color:C.muted,letterSpacing:2}}>VERSION 3 · PRODUCTION</div>
-        </div>
-        <div className="card" style={{padding:28}}>
-          <div style={{display:'flex',gap:0,marginBottom:24,background:C.card2,borderRadius:10,padding:4}}>
-            {['login','register'].map(m=>(
-              <button key={m} onClick={()=>{setMode(m);setErr('');}}
-                style={{flex:1,padding:'8px',borderRadius:8,border:'none',cursor:'pointer',fontSize:13,fontWeight:500,
-                  background:mode===m?C.card:'transparent',color:mode===m?C.text:C.sub,
-                  fontFamily:'Space Grotesk,sans-serif',transition:'all .2s'}}>
-                {m==='login'?'Login':'Register'}
-              </button>
-            ))}
-          </div>
-          <Field label="Username" value={name} onChange={setName} placeholder="yourname"/>
-          <Field label="Password" value={pass} onChange={setPass} type="password" placeholder="min 4 characters"/>
-          {err&&<div style={{fontSize:12,color:C.red,marginBottom:12,padding:'8px 12px',background:`${C.red}11`,borderRadius:8}}>⚠ {err}</div>}
-          <Btn full onClick={handle}>{mode==='login'?'Login →':'Register & Start →'}</Btn>
-          <div style={{marginTop:16,padding:12,background:C.card2,borderRadius:9}}>
-            <div className="mono" style={{fontSize:10,color:C.muted,marginBottom:4}}>DEMO LOGIN</div>
-            <div style={{fontSize:12,color:C.sub}}>Username: <span className="mono" style={{color:C.accent}}>demo</span> · Password: <span className="mono" style={{color:C.accent}}>demo123</span></div>
-          </div>
-        </div>
-        <div style={{textAlign:'center',marginTop:16,fontSize:11,color:C.muted}}>
-          Data only in your browser · No server · 🔒 Private
-        </div>
-      </div>
-    </div>
-  );
+function copyToComposer(btn){
+  showToast('Content copied to composer ✓','ok');
+  showPage('compose');
+}
+function useTemplate(name){showToast(`Using "${name}" template…`,'ai');showPage('compose');}
+function insertHashtags(){
+  const inp=$('composeInput');if(!inp)return;
+  inp.value+=' #AI #Innovation #ContentCreator #Marketing #SocialMedia';
+  updateCharCount();showToast('Hashtags added ✓','ok');
 }
 
-/* ────────────────────────────────────────────────
-   NAV CONFIG
-──────────────────────────────────────────────────*/
-const NAV=[
-  {id:'dashboard',ico:'⬡',l:'Dashboard',h:'डैशबोर्ड'},
-  {id:'clients',ico:'👥',l:'Client Manager',h:'क्लाइंट डेटाबेस',badge:'NEW'},
-  {id:'tally',ico:'📄',l:'Tally AI Entry',h:'Tally XML Export',badge:'AI'},
-  {id:'gst',ico:'🚀',l:'GST Filing',h:'Real JSON Export',badge:'REAL'},
-  {id:'tds',ico:'💰',l:'TDS Manager',h:'TDS/TCS',badge:''},
-  {id:'reports',ico:'📊',l:'Reports',h:'Export Ready'},
-  {id:'sync',ico:'☁',l:'Backup & Sync',h:'Import/Export',badge:'NEW'},
-  {id:'ai',ico:'✦',l:'CA AI Assistant',h:'Hindi/English AI',badge:'AI'},
-];
+/* ══════════════════════════════════
+   NAVIGATION
+══════════════════════════════════ */
+const PAGES={
+  dashboard:{t:'Dashboard',s:'Overview'},
+  compose:{t:'Compose & Publish',s:'Write · Schedule · Automate'},
+  scheduler:{t:'Content Scheduler',s:'Visual Calendar'},
+  queue:{t:'Post Queue',s:'All Posts'},
+  ai_content:{t:'AI Content Generator',s:'Auto-create posts with AI'},
+  analytics:{t:'Performance Analytics',s:'Deep Insights'},
+  audience:{t:'Audience Insights',s:'Know Your People'},
+  automation:{t:'Automation Rules',s:'Autopilot Mode'},
+  hashtags:{t:'Hashtag Manager',s:'Research & Organise'},
+  reports:{t:'Reports & Export',s:'Performance Reports'},
+};
 
-/* ────────────────────────────────────────────────
-   MAIN APP
-──────────────────────────────────────────────────*/
-function App(){
-  const [user,setUser]=useState(()=>sessionStorage.getItem('caop_user'));
-  const [active,setActive]=useState('dashboard');
-  const [sideOpen,setSideOpen]=useState(window.innerWidth>768);
-  const [isOnline,setIsOnline]=useState(navigator.onLine);
-  const [clients,setClients]=useState(()=>STORE.get('clients',[]));
-  const {toasts,toast}=useToast();
-  const [confirm,setConfirm]=useState(null);
+document.querySelectorAll('.ni').forEach(n=>n.addEventListener('click',()=>showPage(n.dataset.page)));
 
-  useEffect(()=>{
-    // Pre-create demo user
-    const users=JSON.parse(localStorage.getItem('caop_users')||'{}');
-    if(!users['demo']){users['demo']=btoa('demo123');localStorage.setItem('caop_users',JSON.stringify(users));}
-    const on=()=>setIsOnline(true);
-    const off=()=>setIsOnline(false);
-    window.addEventListener('online',on);window.addEventListener('offline',off);
-    const resize=()=>{if(window.innerWidth<768)setSideOpen(false);};
-    window.addEventListener('resize',resize);
-    return()=>{window.removeEventListener('online',on);window.removeEventListener('offline',off);window.removeEventListener('resize',resize);};
-  },[]);
-
-  useEffect(()=>{STORE.set('clients',clients);},[clients]);
-
-  if(!user)return <Login onLogin={u=>{setUser(u);}}/>;
-
-  const logout=()=>{
-    setConfirm({title:'Logout?',msg:'Session खत्म होगी। Data safe रहेगा।',
-      onOk:()=>{sessionStorage.removeItem('caop_user');setUser(null);setConfirm(null);}});
-  };
-
-  const renderContent=()=>{
-    const p={toast,isOnline,clients,setClients};
-    switch(active){
-      case 'dashboard': return <Dashboard setActive={setActive} clients={clients}/>;
-      case 'clients':   return <ClientModule {...p}/>;
-      case 'tally':     return <TallyModule {...p}/>;
-      case 'gst':       return <AutoGSTModule {...p}/>;
-      case 'tds':       return <TDSModule {...p}/>;
-      case 'reports':   return <ReportsModule/>;
-      case 'sync':      return <SyncModule {...p} user={user}/>;
-      case 'ai':        return <AIModule {...p}/>;
-      default:return <div style={{textAlign:'center',padding:60,color:C.muted}}><div style={{fontSize:40,marginBottom:12}}>🚧</div><div style={{fontSize:16}}>Coming Soon</div></div>;
-    }
-  };
-
-  const cur=NAV.find(n=>n.id===active);
-
-  return(
-    <div style={{display:'flex',height:'100vh',overflow:'hidden',background:C.bg}}>
-      <Toasts toasts={toasts}/>
-      {sideOpen&&window.innerWidth<=768&&(
-        <div onClick={()=>setSideOpen(false)} style={{position:'fixed',inset:0,background:'rgba(0,0,0,.65)',zIndex:199}}/>
-      )}
-
-      {/* SIDEBAR */}
-      <div className="sidebar" style={{
-        width:sideOpen?238:58,background:C.surf,borderRight:`1px solid ${C.border}`,
-        transition:'width .3s ease',flexShrink:0,display:'flex',flexDirection:'column',
-        overflow:'hidden',zIndex:200}}>
-        <div style={{padding:'14px 12px',borderBottom:`1px solid ${C.border}`,
-          display:'flex',alignItems:'center',gap:10,minHeight:58}}>
-          <div style={{width:32,height:32,flexShrink:0,borderRadius:9,
-            background:`linear-gradient(135deg,${C.accent},#4299e1)`,
-            display:'flex',alignItems:'center',justifyContent:'center',fontSize:16}}>⬡</div>
-          {sideOpen&&(
-            <div>
-              <div style={{fontSize:13,fontWeight:700,color:C.accent,letterSpacing:.5,whiteSpace:'nowrap'}}>CA OFFICE</div>
-              <div className="mono" style={{fontSize:8,color:C.muted,letterSpacing:2}}>PRO v3</div>
-            </div>
-          )}
-        </div>
-
-        <div style={{flex:1,overflowY:'auto',padding:'6px 0'}}>
-          {NAV.map(n=>(
-            <div key={n.id} className={`nav-item${active===n.id?' active':''}`}
-              onClick={()=>{setActive(n.id);if(window.innerWidth<=768)setSideOpen(false);}}
-              title={!sideOpen?n.l:''}
-              style={{padding:'10px 12px',display:'flex',alignItems:'center',gap:10,
-                borderLeft:`3px solid ${active===n.id?C.accent:'transparent'}`,
-                background:active===n.id?C.accentDim:'transparent'}}>
-              <span style={{fontSize:15,flexShrink:0,width:22,textAlign:'center',
-                color:active===n.id?C.accent:C.sub}}>{n.ico}</span>
-              {sideOpen&&(
-                <>
-                  <div style={{flex:1,minWidth:0}}>
-                    <div style={{fontSize:12,color:active===n.id?C.text:C.sub,fontWeight:active===n.id?600:400,whiteSpace:'nowrap'}}>{n.l}</div>
-                    <div className="mono" style={{fontSize:9,color:C.muted}}>{n.h}</div>
-                  </div>
-                  {n.badge&&<span style={{fontSize:8,background:n.badge==='AI'?C.accent:n.badge==='REAL'?C.green:C.orange,
-                    color:'#07090f',padding:'2px 6px',borderRadius:10,
-                    fontFamily:'JetBrains Mono,monospace',fontWeight:700,flexShrink:0}}>{n.badge}</span>}
-                </>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {sideOpen&&(
-          <div style={{padding:12,borderTop:`1px solid ${C.border}`}}>
-            <div style={{background:C.accentDim,borderRadius:9,padding:'10px 12px',marginBottom:8}}>
-              <div className="mono" style={{fontSize:9,color:C.accent,marginBottom:2}}>LOGGED IN AS</div>
-              <div style={{fontSize:13,fontWeight:600,color:C.text}}>{user}</div>
-            </div>
-            <button onClick={logout} style={{width:'100%',background:C.card2,border:`1px solid ${C.border}`,
-              color:C.sub,padding:'8px',borderRadius:9,cursor:'pointer',fontSize:12,
-              fontFamily:'Space Grotesk,sans-serif'}}>Logout</button>
-          </div>
-        )}
-      </div>
-
-      {/* MAIN */}
-      <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden',minWidth:0}}>
-        {/* Topbar */}
-        <div style={{background:C.surf,borderBottom:`1px solid ${C.border}`,
-          padding:'0 18px',display:'flex',alignItems:'center',justifyContent:'space-between',height:56,flexShrink:0}}>
-          <div style={{display:'flex',alignItems:'center',gap:12}}>
-            <button onClick={()=>setSideOpen(s=>!s)}
-              style={{background:C.card,border:`1px solid ${C.border}`,color:C.sub,
-                padding:'7px 10px',borderRadius:8,cursor:'pointer',fontSize:15}}>☰</button>
-            <div>
-              <div style={{fontSize:14,fontWeight:600}}>{cur?.l}</div>
-              <div className="mono" style={{fontSize:9,color:C.muted}}>{cur?.h}</div>
-            </div>
-          </div>
-          <div style={{display:'flex',alignItems:'center',gap:14}}>
-            <div className={`mono ${isOnline?'':'pulse-anim'}`} style={{fontSize:10,color:isOnline?C.green:C.orange}}>
-              {isOnline?'● Online':'● Offline'}
-            </div>
-            <div className="hide-sm mono" style={{fontSize:10,color:C.muted}}>FY 2025-26</div>
-            <div style={{width:32,height:32,background:C.accentDim,border:`1px solid ${C.accent}44`,
-              borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',
-              fontSize:12,color:C.accent,fontWeight:700,cursor:'pointer'}}
-              onClick={logout} title="Logout">
-              {user.slice(0,2).toUpperCase()}
-            </div>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div style={{flex:1,overflowY:'auto',padding:18}}>
-          {renderContent()}
-        </div>
-      </div>
-
-      <Confirm open={!!confirm} title={confirm?.title} msg={confirm?.msg}
-        onOk={confirm?.onOk} onCancel={()=>setConfirm(null)}/>
-    </div>
-  );
+function showPage(p){
+  document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const el=document.getElementById(`page-${p}`);if(el)el.classList.add('active');
+  const nav=document.querySelector(`.ni[data-page="${p}"]`);if(nav)nav.classList.add('active');
+  const cfg=PAGES[p]||{t:p,s:''};
+  $('pgTitle').innerHTML=`${cfg.t} <span>${cfg.s}</span>`;
+  document.getElementById('sidebar').classList.remove('open');
 }
 
-// Register demo user on first load
-const users=JSON.parse(localStorage.getItem('caop_users')||'{}');
-if(!users['demo']){users['demo']=btoa('demo123');localStorage.setItem('caop_users',JSON.stringify(users));}
-
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.querySelectorAll('.modal-bg.open').forEach(m=>m.classList.remove('open'));
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();showPage('compose');}
+});
 </script>
 </body>
 </html>
